@@ -1,0 +1,549 @@
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/pretty_printing_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: When printing the instantiation we should use the right amount of spaces</h2>
+<div class="step successful">Given the class:
+public class A {
+    Object foo = new Object();
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class A {
+
+    Object foo = new Object();
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: When printing the lambda expression we should use the right indentation</h2>
+<div class="step successful">Given the class:
+public class B {
+	Runnable runnable = ()-&gt; System.out.println(&quot;running&quot;);
+    Consumer&lt;Integer&gt; consumer = i-&gt;{ i+=1; System.out.println(i);};
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class B {
+
+    Runnable runnable = () -&gt; System.out.println(&quot;running&quot;);
+
+    Consumer&lt;Integer&gt; consumer = i -&gt; {
+        i += 1;
+        System.out.println(i);
+    };
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Printing orphan comments in empty method</h2>
+<div class="step successful">Given the class:
+class A {
+    public void helloWorld(String greeting, String name) {
+        //sdfsdfsdf
+            //sdfds
+        /*
+                            dgfdgfdgfdgfdgfd
+         */
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A {
+
+    public void helloWorld(String greeting, String name) {
+    // sdfsdfsdf
+    // sdfds
+    /*
+                            dgfdgfdgfdgfdgfd
+         */
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Printing orphan comments in empty method (issue 192)</h2>
+<div class="step successful">Given the class:
+public class StepImplementation {
+    @Step(&quot;A step&quot;)
+    public void contextStep() {
+        // Foo bar
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class StepImplementation {
+
+    @Step(&quot;A step&quot;)
+    public void contextStep() {
+    // Foo bar
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Printing orphan comments in for loop (issue 192)</h2>
+<div class="step successful">Given the class:
+public class StepImplementation {
+    public void contextStep() {
+        for (int i = 0; i &lt; 5; i++) {
+            // foo bar
+        }
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class StepImplementation {
+
+    public void contextStep() {
+        for (int i = 0; i &lt; 5; i++) {
+        // foo bar
+        }
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Printing orphan and attributed comments in for loop (issue 192)</h2>
+<div class="step successful">Given the class:
+public class StepImplementation {
+public void contextStep() {
+        for (int i = 0; i &lt; 5; i++) {
+            // foo bar
+            System.out.println();
+            // another foo bar
+        }
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class StepImplementation {
+
+    public void contextStep() {
+        for (int i = 0; i &lt; 5; i++) {
+            // foo bar
+            System.out.println();
+        // another foo bar
+        }
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: An empty Enum is printed correctly</h2>
+<div class="step successful">Given the compilation unit:
+package test; enum XYZ {}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+package test;
+
+enum XYZ {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: An enum without fields has no () on its members</h2>
+<div class="step successful">Given the compilation unit:
+package test; enum XYZ {A,B,C}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+package test;
+
+enum XYZ {
+
+    A, B, C
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Strings with escaped newlines are parsed correctly</h2>
+<div class="step successful">Given the class:
+class A {
+    public void helloWorld(String greeting, String name) {
+        return &quot;hello\nworld&quot;;
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A {
+
+    public void helloWorld(String greeting, String name) {
+        return &quot;hello\nworld&quot;;
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A multi-catch is printed correctly</h2>
+<div class="step successful">Given the class:
+class A {
+    public void a() {
+        try {
+        } catch (IndexOutOfBoundException | IOException e) {
+        }
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A {
+
+    public void a() {
+        try {
+        } catch (IndexOutOfBoundException | IOException e) {
+        }
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: An empty import does not fail</h2>
+<div class="step successful">Given the class:
+package a.b.c;
+
+;</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+package a.b.c;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse blocks</h2>
+<div class="step successful">Given the block:
+{
+    a=2;
+    b=3;
+}</div>
+<div class="step successful">When the block is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+{
+    a = 2;
+    b = 3;
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse statements</h2>
+<div class="step successful">Given the statement:
+while (true) {
+}</div>
+<div class="step successful">When the statement is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+while (true) {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse static on demand imports</h2>
+<div class="step successful">Given the import:
+import static a.b.c.Abc.*;</div>
+<div class="step successful">When the import is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+import static a.b.c.Abc.*;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse static type imports</h2>
+<div class="step successful">Given the import:
+import static a.b.c.Abc;</div>
+<div class="step successful">When the import is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+import static a.b.c.Abc;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse on demand imports</h2>
+<div class="step successful">Given the import:
+import a.b.c.*;</div>
+<div class="step successful">When the import is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+import a.b.c.*;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse type imports</h2>
+<div class="step successful">Given the import:
+import a.b.c.Abc;</div>
+<div class="step successful">When the import is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+import a.b.c.Abc;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse annotations</h2>
+<div class="step successful">Given the annotation:
+@Abc</div>
+<div class="step successful">When the annotation is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+@Abc</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse body declarations</h2>
+<div class="step successful">Given the body:
+String author();</div>
+<div class="step successful">When the annotation body declaration is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+String author();</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse class body declarations</h2>
+<div class="step successful">Given the body:
+public int xyz() {}</div>
+<div class="step successful">When the class body declaration is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public int xyz() {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: we can parse interface body declarations</h2>
+<div class="step successful">Given the body:
+int xyz();</div>
+<div class="step successful">When the interface body declaration is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+int xyz();</div>
+</div>
+<div class="scenario">
+<h2>Scenario: It doesn't throw NPE when using a modifierVisitorAdapter</h2>
+<div class="step successful">Given the class:
+public class Example {
+  private String mString;
+  public Example(String arg) {
+    mString = arg;
+  }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">When the class is visited by an empty ModifierVisitorAdapter</div>
+<div class="step successful">Then it is printed as:
+public class Example {
+
+    private String mString;
+
+    public Example(String arg) {
+        mString = arg;
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: JavaDoc OR comment is printed, not both.</h2>
+<div class="step successful">Given the class:
+public class Foo {
+    /** This line gets duplicated */
+    public void foo() {
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class Foo {
+
+    /**
+     * This line gets duplicated
+     */
+    public void foo() {
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: various lamba casts (issue 418)</h2>
+<div class="step successful">Given the class:
+public class TestLambda {
+    void okMethod() {
+        return (ITF) () -&gt; {
+            return true;
+        };
+    }
+    void faliingMethod() {
+        testThis(check ? null : (ITF) () -&gt; {
+            return true;
+        });
+    }
+}</div>
+<div class="step successful">When the class body declaration is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class TestLambda {
+
+    void okMethod() {
+        return (ITF) () -&gt; {
+            return true;
+        };
+    }
+
+    void faliingMethod() {
+        testThis(check ? null : (ITF) () -&gt; {
+            return true;
+        });
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Duplicate methods are not a parsing error (#416)</h2>
+<div class="step successful">Given the class:
+public class Foo {
+    public void foo() {
+    }
+    public void foo() {
+    }
+    public void foo() {
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class Foo {
+
+    public void foo() {
+    }
+
+    public void foo() {
+    }
+
+    public void foo() {
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Both array syntaxes are supported (#416)</h2>
+<div class="step successful">Given the class:
+public class Foo {
+    public void m1(boolean[] boolArray) {}
+    public void m1(boolean boolArray[]) {}
+    public void m1(boolean[] boolArray[]) {}
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class Foo {
+
+    public void m1(boolean[] boolArray) {
+    }
+
+    public void m1(boolean[] boolArray) {
+    }
+
+    public void m1(boolean[][] boolArray) {
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Array parts can be annotated</h2>
+<div class="step successful">Given the class:
+class Foo {
+    void m1(@Boo boolean @Index1 [] @ Index2 [] boolArray) {}
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class Foo {
+
+    void m1(@Boo boolean @Index1 [] @Index2 [] boolArray) {
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Annotations are supported on annotations</h2>
+<div class="step successful">Given the class:
+@C @interface D {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+@C
+@interface D {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Annotations are supported on interfaces</h2>
+<div class="step successful">Given the class:
+@C interface Abc {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+@C
+interface Abc {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Annotations are supported on enums</h2>
+<div class="step successful">Given the class:
+@C enum Abc {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+@C
+enum Abc {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Annotations are supported on classes (issue 436 is the commented part)</h2>
+<div class="step successful">Given the compilation unit:
+@C
+public class Abc&lt;@C A, @C X extends @C String &amp; @C Serializable&gt; {
+
+	@C int @C[] @C []f;
+
+	@C
+	public Abc(@C int p, List&lt;@C ? extends Object&gt; aa){
+		@C int b;
+	}
+	public @C void a(@C int o) {
+/*		try {
+			throw new IOException();
+		} catch (@C NullPointerException | @C IOException e) {
+		}
+*/	}
+}</div>
+<div class="step successful">When the compilation unit is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+@C
+public class Abc&lt;@C A, @C X extends @C String &amp; @C Serializable&gt; {
+
+    @C
+    int @C [] @C [] f;
+
+    @C
+    public Abc(@C int p, List&lt;@C ? extends Object&gt; aa) {
+        @C
+        int b;
+    }
+
+    @C
+    public void a(@C int o) {
+    /*		try {
+			throw new IOException();
+		} catch (@C NullPointerException | @C IOException e) {
+		}
+*/
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Annotations are supported inside catch (issue 436)</h2>
+<div class="step successful">Given the compilation unit:
+public class Abc {
+	public void a() {
+		try {
+		} catch (@C NullPointerException | @C IOException e) {
+		}
+	}
+}</div>
+<div class="step successful">When the compilation unit is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+public class Abc {
+
+    public void a() {
+        try {
+        } catch (@C NullPointerException | @C IOException e) {
+        }
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Inner class notation does not confuse annotations (#107)</h2>
+<div class="step successful">Given the class:
+class A extends @Ann1 B.@Ann2 C {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A extends @Ann1 B.@Ann2 C {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Make sure interface extends can be annotated</h2>
+<div class="step successful">Given the class:
+interface A extends @X B, @Y C, @Z D {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+interface A extends @X B, @Y C, @Z D {
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: default modifier isn't printed twice</h2>
+<div class="step successful">Given the class:
+interface X {default String author(){}}</div>
+<div class="step successful">When the annotation body declaration is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+interface X {
+
+    default String author() {
+    }
+}</div>
+</div>
+</div>

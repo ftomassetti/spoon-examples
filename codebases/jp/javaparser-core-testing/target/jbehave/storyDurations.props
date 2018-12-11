@@ -1,0 +1,6 @@
+#org.jbehave.core.embedder.StoryManager
+#Tue Nov 27 17:33:45 CET 2018
+com/github/javaparser/bdd/parsing_scenarios.story=0
+threads=1
+total=0
+threadAverage=0

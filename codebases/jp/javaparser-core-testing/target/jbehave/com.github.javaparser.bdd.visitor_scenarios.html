@@ -1,0 +1,70 @@
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/visitor_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: A class that is replicated using a CloneVisitor should be equal to the source</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a second CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser;
+public class ClassEquality {
+
+    public void aMethod(){
+        int a=0; // second comment
+    }
+}</div>
+<div class="step successful">When the CompilationUnit is cloned to the second CompilationUnit</div>
+<div class="step successful">Then the CompilationUnit is equal to the second CompilationUnit</div>
+<div class="step successful">Then the CompilationUnit has the same hashcode to the second CompilationUnit</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A classes variable name is changed to uppercase VoidVisitorAdapter</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a VoidVisitorAdapter with a visit method that changes variable names to uppercase</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser;
+public class ToUpperClass {
+    private int zero = 0;
+}</div>
+<div class="step successful">When the CompilationUnit is visited by the to uppercase visitor</div>
+<div class="step successful">Then the expected source should be:
+package japa.parser;
+public class ToUpperClass {
+    private int ZERO = 0;
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with a try statement is visited using by a VoidVisitorAdapter</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a VoidVisitorAdapter with a visit method and collects the variable names</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser;
+public class ToUpperClass {
+    public void aMethod(){
+        try {
+            int zero = 0;
+        }catch (Exception exception) {
+        }
+    }
+}</div>
+<div class="step successful">When the CompilationUnit is visited by the variable name collector visitor</div>
+<div class="step successful">Then the collected variable name is &quot;exception;zero;&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with a try statement is visited using by a GenericVisitorAdapter</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a GenericVisitorAdapter with a visit method that returns variable names</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser;
+public class ToUpperClass {
+    public void aMethod(){
+        try {
+            int zero = 0;
+        }catch (Exception exception) {
+        }
+    }
+}</div>
+<div class="step successful">When the CompilationUnit is visited by the visitor that returns variable names</div>
+<div class="step successful">Then the return variable name is &quot;zero&quot;</div>
+</div>
+</div>

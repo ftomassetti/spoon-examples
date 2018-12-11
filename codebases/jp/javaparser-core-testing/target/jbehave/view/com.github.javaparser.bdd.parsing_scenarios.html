@@ -1,0 +1,528 @@
+<html>
+<head>
+<title>com.github.javaparser.bdd.parsing_scenarios</title>
+<style type="text/css" media="all">
+@import url( "./style/jbehave-core.css" );
+</style>
+</head>
+<body>
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/parsing_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: Test declaration as String for constructor on parsed class</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class ClassWithAConstructor {
+    protected ClassWithAConstructor(int a, String b) throws This, AndThat, AndWhatElse {
+    }
+}</div>
+<div class="step successful">Then constructor <span class="step parameter">1</span> in class <span class="step parameter">1</span> declaration as a String is &quot;protected ClassWithAConstructor(int a, String b) throws This, AndThat, AndWhatElse&quot;</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Test declaration as String exclusing modifiers and throws for constructor on parsed class</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class ClassWithAConstructor {
+    protected ClassWithAConstructor(int a, String b) throws This, AndThat, AndWhatElse {
+    }
+}</div>
+<div class="step successful">Then constructor <span class="step parameter">1</span> in class <span class="step parameter">1</span> declaration short form as a String is &quot;ClassWithAConstructor(int a, String b)&quot;</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Test declaration as String exclusing modifiers and throws for method on parsed class</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class ClassWithAMethod {
+    /*comment1*/
+    final protected /*comment2*/ native List&lt;String&gt; /*comment2*/ aMethod(int a, String b) throws /*comment3*/ This, AndThat, AndWhatElse {
+
+    }
+}</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> declaration as a String is &quot;protected final native List&lt;String&gt; aMethod(int a, String b) throws This, AndThat, AndWhatElse&quot;</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Test declaration as String exclusing modifiers and throws for method on parsed class</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class ClassWithAMethod {
+    /*comment1*/
+    final protected /*comment2*/ native List&lt;String&gt; /*comment2*/ aMethod(int a, String b) throws /*comment3*/ This, AndThat, AndWhatElse {
+
+    }
+}</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> declaration as a String short form is &quot;List&lt;String&gt; aMethod(int a, String b)&quot;</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: The same class source is parsed by two different compilation units and should therefore be equal</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a second CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.comments;
+public class ClassEquality {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+    }
+}</div>
+<div class="step successful">When the following sources is parsed by the second CompilationUnit:
+package japa.parser.comments;
+public class ClassEquality {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+    }
+}</div>
+<div class="step successful">Then the CompilationUnit is equal to the second CompilationUnit</div>
+<div class="step successful">Then the CompilationUnit has the same hashcode to the second CompilationUnit</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+<div class="step successful">Then all nodes of the second compilation unit refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Two different class sources are parsed by two different compilation units and should not be equal</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a second CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.comments;
+public class ClassEquality {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+    }
+}</div>
+<div class="step successful">When the following sources is parsed by the second CompilationUnit:
+package japa.parser.comments;
+public class DifferentClass {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+    }
+}</div>
+<div class="step successful">Then the CompilationUnit is not equal to the second CompilationUnit</div>
+<div class="step successful">Then the CompilationUnit has a different hashcode to the second CompilationUnit</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+<div class="step successful">Then all nodes of the second compilation unit refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Classes that only differ by comments should not be equal or have the same hashcode</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Given a second CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.comments;
+public class ClassEquality {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+    }
+}</div>
+<div class="step successful">When the following sources is parsed by the second CompilationUnit:
+package japa.parser.comments;
+public class ClassEquality {
+
+    public void aMethod(){
+        // first comment
+        int a=0;
+    }
+}</div>
+<div class="step successful">Then the CompilationUnit is not equal to the second CompilationUnit</div>
+<div class="step successful">Then the CompilationUnit has a different hashcode to the second CompilationUnit</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+<div class="step successful">Then all nodes of the second compilation unit refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with a colon in the annoation value is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.ast;
+import org.junit.Test;
+public class Issue37 {
+    public static @interface SomeAnnotation {
+        String value();
+    }
+    // Parser bug: the type of this field
+    @SomeAnnotation(&quot;http://someURL.org/&quot;)
+    protected Test test;
+}</div>
+<div class="step successful">Then field <span class="step parameter">1</span> in class <span class="step parameter">1</span> contains annotation <span class="step parameter">1</span> value is &quot;&quot;http://someURL.org/&quot;&quot;</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with a Lambda is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package bdd.samples;
+import java.util.stream.Stream;
+public class Lambdas {
+
+    public static void main(String[] args) {
+        // Lambda Runnable
+        Runnable r1 = () -&gt; System.out.println(&quot;Hello world!&quot;);
+        Runnable r2 = () -&gt; {};
+        Runnable r3 = () -&gt; { System.out.println(&quot;Hello world two!&quot;); };
+
+        Stream&lt;CharSequence&gt; stream = Stream.generate((Supplier&lt;CharSequence&gt;) () -&gt; &quot;foo&quot;);
+    }
+}</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is called <span class="step parameter">r1</span></div>
+<div class="step successful">Then lambda in statement <span class="step parameter">2</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is called <span class="step parameter">r2</span></div>
+<div class="step successful">Then lambda in statement <span class="step parameter">3</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is called <span class="step parameter">r3</span></div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> body is &quot;System.out.println(&quot;Hello world!&quot;);&quot;</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">2</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> block statement is null</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">3</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> block statement is &quot;System.out.println(&quot;Hello world two!&quot;);&quot;</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained body</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">3</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained body</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+<div class="step successful">Then lambda in method call in statement <span class="step parameter">4</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> body is &quot;&quot;foo&quot;;&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with parameterized Lambdas is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package com.github.javapasrser.bdd.parsing;
+import java.util.function.Function;
+public class ParameterizedLambdas {
+    public static void main(String[] args) {
+        Function&lt;Integer,String&gt; f1 = (Integer i) -&gt; String.valueOf(i);
+        Function&lt;Integer,String&gt; f2 = (i) -&gt; String.valueOf(i);
+        Function&lt;Integer,String&gt; f3 = i -&gt; String.valueOf(i);
+    }
+}</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained parameter</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">2</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained parameter</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">3</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained parameter</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained body</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">2</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained body</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">3</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is parent of contained body</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has parameters with non-null type</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">2</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has parameters with non-null type</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">3</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has parameters with non-null type</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with multi-parameters Lambdas is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package com.github.javapasrser.bdd.parsing;
+import java.util.function.Function;
+public class MultiParameterizedLambdas {
+    public static void main(String[] args) {
+        BiFunction&lt;Integer, Integer, String&gt; f = (a, b) -&gt; String.valueOf(a) + String.valueOf(b);
+    }
+}</div>
+<div class="step successful">Then lambda in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has parameters with non-null type</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with a method reference is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+public class Person {
+
+    String name;
+    LocalDate birthday;
+
+    public void sortByAge(Person[] people){
+        Arrays.sort(people, Person::compareByAge);
+    }
+
+    public static int compareByAge(Person a, Person b) {
+        return a.birthday.compareTo(b.birthday);
+    }
+}</div>
+<div class="step successful">Then method reference in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> scope is <span class="step parameter">Person</span></div>
+<div class="step successful">Then method reference in statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> identifier is <span class="step parameter">compareByAge</span></div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: An interface with a default method is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+interface MyInterface {
+    default String doSomething(){
+        return &quot;implementation in an interface!&quot;;
+    }
+
+    String doSomethingElse();
+}</div>
+<div class="step successful">Then method <span class="step parameter">1</span> class <span class="step parameter">1</span> is a default method</div>
+<div class="step successful">Then method <span class="step parameter">2</span> class <span class="step parameter">1</span> is not a default method</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A lambda expression inside a conditional expression is parsed by the Java Parser</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+public class A{
+	static &lt;T&gt; Predicate&lt;T&gt; isEqual(Object targetRef) {
+	    return (null == targetRef)? Objects::isNull : object -&gt; targetRef.equals(object);
+	}
+}</div>
+<div class="step successful">Then ThenExpr in the conditional expression of the statement <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is LambdaExpr</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Parsing array creation expressions the positions are correct</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed (trimming space):
+public class A{
+    int[][] a = new int[][]{};
+}</div>
+<div class="step successful">When I take the ArrayCreationExpr</div>
+<div class="step successful">Then the begin line is <span class="step parameter">2</span></div>
+<div class="step successful">Then the begin column is <span class="step parameter">17</span></div>
+<div class="step successful">Then the end line is <span class="step parameter">2</span></div>
+<div class="step successful">Then the end column is <span class="step parameter">29</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: simple cast on lambda expression can be parsed</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    static final Comparator&lt;ChronoLocalDate&gt; DATE_ORDER =
+        (Comparator&lt;ChronoLocalDate&gt;) (date1, date2) -&gt; {
+            return Long.compare(date1.toEpochDay(), date2.toEpochDay());
+        };
+}</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a combined cast on lambda expression can be parsed</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    static final Comparator&lt;ChronoLocalDate&gt; DATE_ORDER =
+        (Comparator&lt;ChronoLocalDate&gt; &amp; Serializable) (date1, date2) -&gt; {
+            return Long.compare(date1.toEpochDay(), date2.toEpochDay());
+        };
+}</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a combined cast on a literal can be parsed</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    static int a = (Comparator&lt;ChronoLocalDate&gt; &amp; Serializable) 1;
+}</div>
+<div class="step successful">Then all nodes refer to their parent</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Parsing excess semicolons on CompilationUnit level should work</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+;
+package a;
+;
+import foo.a;
+;
+class A { }
+;</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Parsing excess semicolons in an AnnotationTypeDeclaration should work</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+@interface A {
+    ;
+    ;
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Classes that are thrown from a method can be annotated</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    void a() throws @Abc X {
+    }
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Classes that are thrown from a constructor can be annotated</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    A() throws @Abc X {
+    }
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Parsing trailing semicolons inside the imports area should work</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+import foo.a;;
+import foo.b;
+
+class A {
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Full package name should be parsed</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package com.github.javaparser.bdd;
+class C {}</div>
+<div class="step successful">When I take the PackageDeclaration</div>
+<div class="step successful">Then the package name is <span class="step parameter">com.github.javaparser.bdd</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Strings with unescaped newlines are illegal (issue 211)</h2>
+<div class="step successful">Given the class:
+class A {
+    public void helloWorld(String greeting, String name) {
+        return &quot;hello
+        world&quot;;
+    }
+}</div>
+<div class="step successful">Then the Java parser cannot parse it because of an error</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Chars with unescaped newlines are illegal (issue 211)</h2>
+<div class="step successful">Given the class:
+class A {
+    public void helloWorld(String greeting, String name) {
+        return '
+';
+    }
+}</div>
+<div class="step successful">Then the Java parser cannot parse it because of an error</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Diamond Operator information is exposed</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    List&lt;String&gt; args = new ArrayList&lt;&gt;();
+}</div>
+<div class="step successful">When I take the ObjectCreationExpr</div>
+<div class="step successful">Then the type's diamond operator flag should be <span class="step parameter">true</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Diamond Operator can be parsed also with space and comments</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    List&lt;String&gt; args = new ArrayList&lt;  /*hello*/  &gt;();
+}</div>
+<div class="step successful">When I take the ObjectCreationExpr</div>
+<div class="step successful">Then the type's diamond operator flag should be <span class="step parameter">true</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Type Arguments are not specified</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    List args = new ArrayList();
+}</div>
+<div class="step successful">When I take the ObjectCreationExpr</div>
+<div class="step successful">Then the type's diamond operator flag should be <span class="step parameter">false</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Type Arguments are specified</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class A {
+    Either&lt;Ok, Error&gt; either = new Either&lt;Ok, Error&gt;();
+}</div>
+<div class="step successful">When I take the ObjectCreationExpr</div>
+<div class="step successful">Then the type's diamond operator flag should be <span class="step parameter">false</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: A method reference with type arguments is parsed correctly</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class X { 
+	void x() { 
+		a.orElseGet( Stream::&lt;IVariable&lt;?&gt;&gt;empty ); 
+	} 
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: The target of this assignExpr is not null</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+public class Example {
+  private String mString;
+  public Example(String arg) {
+    mString = arg;
+  }
+}</div>
+<div class="step successful">Then the assignExpr produced doesn't have a null target</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Two comments in one line, and a unicode space</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+public class Example {
+  Object mAvailablePrimaryConnection;
+  public Example(String arg) {
+     ​mAvailablePrimaryConnection = openConnectionLocked(mConfiguration,
+        true /*primaryConnection*/); // comment
+  }
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: alternative [] placings</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class I{int[]bar(int[]x[])[]{return new int[][]{};}}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+<div class="scenario">
+<h2>Scenario: try requires resources, a finally or a catch (issue 442)</h2>
+<div class="step successful">Given the class:
+class A {
+    public void helloWorld() {
+        try {
+        }
+    }
+}</div>
+<div class="step successful">Then the Java parser cannot parse it because of an error</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Partially dimensioned arrays are fine</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+class X {
+    int a = new int @A [10] @A [20] @A [] [];
+    int b = new int @A [] @A []{{1}};
+}</div>
+<div class="step successful">Then no errors are reported</div>
+</div>
+</div>
+
+</body>
+<!--  SyntaxHighlighter resources:  should be included at end of body -->
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shCore.css"/>
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shThemeRDark.css"/>
+<script language="javascript" src="./js/sh-3.0.83/shCore.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushBash.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushCss.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushDiff.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushGroovy.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJava.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJScript.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPlain.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPython.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushRuby.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushScala.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushXml.js"></script>
+<script language="javascript" src="./js/shBrushBdd.js"></script>
+<script type="text/javascript">
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['toolbar'] = false;    
+    SyntaxHighlighter.all();
+</script>
+</html>

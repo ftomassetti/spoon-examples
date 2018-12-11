@@ -1,0 +1,352 @@
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/comment_parsing_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments is processed by the Comments Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+public class ClassWithLineComments {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+        // third comment
+        // fourth comment
+    }
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">4</span></div>
+<div class="step successful">Then line comment <span class="step parameter">1</span> is &quot; first comment&quot;</div>
+<div class="step successful">Then line comment <span class="step parameter">2</span> is &quot; second comment&quot;</div>
+<div class="step successful">Then line comment <span class="step parameter">3</span> is &quot; third comment&quot;</div>
+<div class="step successful">Then line comment <span class="step parameter">4</span> is &quot; fourth comment&quot;</div>
+<div class="step successful">Then the line comments have the following positions:
+<span class="step parameter"><table>
+<thead>
+<tr>
+<th>beginLine</th><th>beginColumn</th><th>endLine</th><th>endColumn</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td><td>9</td><td>6</td><td>25</td></tr>
+<tr>
+<td>7</td><td>18</td><td>7</td><td>35</td></tr>
+<tr>
+<td>8</td><td>9</td><td>8</td><td>25</td></tr>
+<tr>
+<td>9</td><td>9</td><td>9</td><td>26</td></tr>
+</tbody>
+</table>
+</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Block Comments is processed by the Comments Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+/* comment which is not attributed to the class, it floats around as an orphan */
+/* comment to a class */
+public class ClassWithBlockComments {
+
+    /* comment to a method */
+    void foo(){};
+
+    /* comment put randomly in class:
+
+    another orphan.
+    It spans over more lines */
+
+}
+
+/* a comment lost inside a compilation unit. It is orphan, I am sure you got this one */</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">5</span></div>
+<div class="step successful">Then block comment <span class="step parameter">1</span> is &quot; comment which is not attributed to the class, it floats around as an orphan &quot;</div>
+<div class="step successful">Then block comment <span class="step parameter">2</span> is &quot; comment to a class &quot;</div>
+<div class="step successful">Then block comment <span class="step parameter">3</span> is &quot; comment to a method &quot;</div>
+<div class="step successful">Then block comment <span class="step parameter">4</span> is &quot; comment put randomly in class:    another orphan.    It spans over more lines &quot;</div>
+<div class="step successful">Then block comment <span class="step parameter">5</span> is &quot; a comment lost inside a compilation unit. It is orphan, I am sure you got this one  &quot;</div>
+<div class="step successful">Then the block comments have the following positions:
+<span class="step parameter"><table>
+<thead>
+<tr>
+<th>beginLine</th><th>beginColumn</th><th>endLine</th><th>endColumn</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td><td>1</td><td>3</td><td>81</td></tr>
+<tr>
+<td>4</td><td>1</td><td>4</td><td>24</td></tr>
+<tr>
+<td>7</td><td>5</td><td>7</td><td>29</td></tr>
+<tr>
+<td>10</td><td>5</td><td>13</td><td>31</td></tr>
+<tr>
+<td>17</td><td>1</td><td>17</td><td>88</td></tr>
+</tbody>
+</table>
+</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Javadoc Comments is processed by the Comments Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+/** a proper javadoc comment */
+public class ClassWithJavadocComments {
+
+    void foo(){};
+
+
+}
+/** a floating javadoc comment */</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">2</span></div>
+<div class="step successful">Then Javadoc comment <span class="step parameter">1</span> is &quot; a proper javadoc comment &quot;</div>
+<div class="step successful">Then Javadoc comment <span class="step parameter">2</span> is &quot; a floating javadoc comment &quot;</div>
+<div class="step successful">Then the Javadoc comments have the following positions:
+<span class="step parameter"><table>
+<thead>
+<tr>
+<th>beginLine</th><th>beginColumn</th><th>endLine</th><th>endColumn</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td><td>1</td><td>3</td><td>31</td></tr>
+<tr>
+<td>10</td><td>1</td><td>10</td><td>33</td></tr>
+</tbody>
+</table>
+</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Orphan Comments is processed by the Comments Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+/**Javadoc associated with the class*/
+public class ClassWithOrphanComments {
+    //a first comment floating in the class
+
+    //comment associated to the method
+    void foo(){
+        /*comment floating inside the method*/
+    }
+
+    //a second comment floating in the class
+}
+
+//Orphan comment inside the CompilationUnit</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">6</span></div>
+<div class="step successful">Then line comment <span class="step parameter">1</span> is &quot;a first comment floating in the class&quot;</div>
+<div class="step successful">Then line comment <span class="step parameter">2</span> is &quot;comment associated to the method&quot;</div>
+<div class="step successful">Then line comment <span class="step parameter">3</span> is &quot;a second comment floating in the class&quot;</div>
+<div class="step successful">Then block comment <span class="step parameter">1</span> is &quot;comment floating inside the method&quot;</div>
+<div class="step successful">Then Javadoc comment <span class="step parameter">1</span> is &quot;Javadoc associated with the class&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Orphan Comments is processed by the Comments Parser</h2>
+<div class="step successful">Given the class:
+/*CompilationUnitComment*/
+package japa.parser.comments;
+
+public class ClassWithMixedStyleComments {
+    // line comment
+    int a = 0;
+    // another line comment
+    int b = 0;
+    // line comment
+    int c = 0;
+    /* multi-line
+       comment
+    */
+    int d = 0;
+    /**
+     * multi-line
+     */
+    int e = 0;
+    // final comment
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">7</span></div>
+<div class="step successful">Then the line comments have the following positions:
+<span class="step parameter"><table>
+<thead>
+<tr>
+<th>beginLine</th><th>beginColumn</th><th>endLine</th><th>endColumn</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td><td>5</td><td>5</td><td>20</td></tr>
+<tr>
+<td>7</td><td>5</td><td>7</td><td>28</td></tr>
+<tr>
+<td>9</td><td>5</td><td>9</td><td>20</td></tr>
+<tr>
+<td>19</td><td>5</td><td>19</td><td>21</td></tr>
+</tbody>
+</table>
+</span></div>
+<div class="step successful">Then the block comments have the following positions:
+<span class="step parameter"><table>
+<thead>
+<tr>
+<th>beginLine</th><th>beginColumn</th><th>endLine</th><th>endColumn</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td><td>1</td><td>1</td><td>26</td></tr>
+<tr>
+<td>11</td><td>5</td><td>13</td><td>6</td></tr>
+</tbody>
+</table>
+</span></div>
+<div class="step successful">Then the Javadoc comments have the following positions:
+<span class="step parameter"><table>
+<thead>
+<tr>
+<th>beginLine</th><th>beginColumn</th><th>endLine</th><th>endColumn</th></tr>
+</thead>
+<tbody>
+<tr>
+<td>15</td><td>5</td><td>17</td><td>7</td></tr>
+</tbody>
+</table>
+</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: A method containing two consecutive line comments is parsed correctly</h2>
+<div class="step successful">Given the class:
+class A {
+  void aMethod(){
+     // foo
+     // bar
+     int a;
+  }
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">2</span></div>
+<div class="step successful">Then line comment <span class="step parameter">1</span> is &quot; foo&quot;</div>
+<div class="step successful">Then line comment <span class="step parameter">2</span> is &quot; bar&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Comments from a file with an non-UTF-8 encoding are parsed correctly</h2>
+<div class="step successful">When read sample &quot;ClassInLatin1&quot; using encoding &quot;ISO-8859-1&quot;</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">3</span></div>
+<div class="step successful">Then line comment <span class="step parameter">2</span> is &quot; A l'&eacute;mej in pias&igrave; che sent d&euml;sgust.&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Should not recognize /*/ as a comment</h2>
+<div class="step successful">Given the class:
+/*/
+class Foo {}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">0</span></div>
+<div class="step successful">Given the class:
+/*/
+class Foo {}</div>
+<div class="step successful">Then the Java parser cannot parse it because of an error</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Should recognize /*/ inside a block comment</h2>
+<div class="step successful">Given the class:
+/* Foo /*/</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">1</span></div>
+<div class="step successful">Then block comment <span class="step parameter">1</span> is &quot; Foo /&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Character Literal is processed by the Comments Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    /** comment1 */
+    private char c = '&quot;';
+    /** comment2 */
+    private String d;
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">2</span></div>
+<div class="step successful">Then Javadoc comment <span class="step parameter">1</span> is &quot;comment1&quot;</div>
+<div class="step successful">Then Javadoc comment <span class="step parameter">2</span> is &quot;comment2&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Double slash in string does not mess up comments parsing</h2>
+<div class="step successful">Given the class:
+public class b {
+
+    public void m1() {
+        String s = &quot;\\&quot;;
+    }
+
+    /**
+     * Comment
+    */
+    public void m2() {
+        return;
+    }
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">1</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Triple slash in string does not mess up comments parsing</h2>
+<div class="step successful">Given the class:
+public class b {
+
+    public void m1() {
+        String s = &quot;\\\&quot; // still in string&quot;;
+    }
+
+    /**
+     * Comment
+    */
+    public void m2() {
+        return;
+    }
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">1</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Four slashes in string does not mess up comments parsing</h2>
+<div class="step successful">Given the class:
+public class b {
+
+    public void m1() {
+        String s = &quot;\\\\&quot; // out of the string&quot;;
+        ;
+    }
+
+    /**
+     * Comment
+    */
+    public void m2() {
+        return;
+    }
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">2</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: Five slashes in string does not mess up comments parsing</h2>
+<div class="step successful">Given the class:
+public class b {
+
+    public void m1() {
+        String s = &quot;\\\\\&quot; // still in string&quot;;
+        ;
+    }
+
+    /**
+     * Comment
+    */
+    public void m2() {
+        return;
+    }
+}</div>
+<div class="step successful">When the class is parsed by the comment parser</div>
+<div class="step successful">Then the total number of comments is <span class="step parameter">1</span></div>
+</div>
+</div>

@@ -1,0 +1,100 @@
+<html>
+<head>
+<title>com.github.javaparser.bdd.position_range_scenarios</title>
+<style type="text/css" media="all">
+@import url( "./style/jbehave-core.css" );
+</style>
+</head>
+<body>
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/position_range_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: a position is equal to another position at the same place</h2>
+<div class="step successful">Given the position <span class="step parameter">10</span>, <span class="step parameter">10</span></div>
+<div class="step successful">When I compare to position <span class="step parameter">10</span>, <span class="step parameter">10</span></div>
+<div class="step successful">Then the positions are equal</div>
+<div class="step successful">And it is not before the first position</div>
+<div class="step successful">And it is not after the first position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a position is after another position</h2>
+<div class="step successful">Given the position <span class="step parameter">10</span>, <span class="step parameter">10</span></div>
+<div class="step successful">When I compare to position <span class="step parameter">20</span>, <span class="step parameter">20</span></div>
+<div class="step successful">Then it is after the first position</div>
+<div class="step successful">And the positions are not equal</div>
+<div class="step successful">And it is not before the first position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a position is directly after another position</h2>
+<div class="step successful">Given the position <span class="step parameter">10</span>, <span class="step parameter">10</span></div>
+<div class="step successful">When I compare to position 10, <span class="step parameter">11</span></div>
+<div class="step successful">Then it is after the first position</div>
+<div class="step successful">And the positions are not equal</div>
+<div class="step successful">And it is not before the first position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a position is before another position</h2>
+<div class="step successful">Given the position <span class="step parameter">10</span>, <span class="step parameter">10</span></div>
+<div class="step successful">When I compare to position <span class="step parameter">5</span>, <span class="step parameter">5</span></div>
+<div class="step successful">Then it is before the first position</div>
+<div class="step successful">And the positions are not equal</div>
+<div class="step successful">And it is not after the first position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a position is directly before another position</h2>
+<div class="step successful">Given the position <span class="step parameter">10</span>, <span class="step parameter">10</span></div>
+<div class="step successful">When I compare to position 10, <span class="step parameter">9</span></div>
+<div class="step successful">Then it is before the first position</div>
+<div class="step successful">And the positions are not equal</div>
+<div class="step successful">And it is not after the first position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a range is equal to another range</h2>
+<div class="step successful">Given the range 10, <span class="step parameter">10</span> - <span class="step parameter">20</span>, <span class="step parameter">20</span></div>
+<div class="step successful">When I compare to range 10, <span class="step parameter">10</span> - <span class="step parameter">20</span>, <span class="step parameter">20</span></div>
+<div class="step successful">Then the ranges are equal</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a range is before a position</h2>
+<div class="step successful">Given the position 20, <span class="step parameter">21</span></div>
+<div class="step successful">When I compare to range 10, <span class="step parameter">10</span> - <span class="step parameter">20</span>, <span class="step parameter">20</span></div>
+<div class="step successful">Then it is before the position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a range is after a position</h2>
+<div class="step successful">Given the position 10, <span class="step parameter">9</span></div>
+<div class="step successful">When I compare to range 10, <span class="step parameter">10</span> - <span class="step parameter">20</span>, <span class="step parameter">20</span></div>
+<div class="step successful">Then it is after the  position</div>
+</div>
+<div class="scenario">
+<h2>Scenario: a range is contained in another range</h2>
+<div class="step successful">Given the range 10, <span class="step parameter">10</span> - <span class="step parameter">20</span>, <span class="step parameter">20</span></div>
+<div class="step successful">When I compare to range 11, <span class="step parameter">11</span> - <span class="step parameter">19</span>, <span class="step parameter">19</span></div>
+<div class="step successful">Then it is contained in the first range</div>
+</div>
+</div>
+
+</body>
+<!--  SyntaxHighlighter resources:  should be included at end of body -->
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shCore.css"/>
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shThemeRDark.css"/>
+<script language="javascript" src="./js/sh-3.0.83/shCore.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushBash.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushCss.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushDiff.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushGroovy.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJava.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJScript.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPlain.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPython.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushRuby.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushScala.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushXml.js"></script>
+<script language="javascript" src="./js/shBrushBdd.js"></script>
+<script type="text/javascript">
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['toolbar'] = false;    
+    SyntaxHighlighter.all();
+</script>
+</html>

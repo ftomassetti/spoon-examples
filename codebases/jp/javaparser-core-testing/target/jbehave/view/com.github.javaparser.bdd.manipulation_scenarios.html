@@ -1,0 +1,165 @@
+<html>
+<head>
+<title>com.github.javaparser.bdd.manipulation_scenarios</title>
+<style type="text/css" media="all">
+@import url( "./style/jbehave-core.css" );
+</style>
+</head>
+<body>
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/manipulation_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: A Node can only ever be equal to a class that extends Node</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">Then is not equal to null</div>
+<div class="step successful">Then is not equal to <span class="step parameter">&quot;Some String Value&quot;</span></div>
+</div>
+<div class="scenario">
+<h2>Scenario: A BlockStmt can be created by a provided String</h2>
+<div class="step successful">Given a BlockStmt</div>
+<div class="step successful">When is the String &quot;{return x+y;}&quot; is parsed by the JavaParser using parseBlock</div>
+<div class="step successful">Then Statement <span class="step parameter">1</span> in BlockStmt toString is &quot;return x + y;&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Statement can be created by a provided String</h2>
+<div class="step successful">Given a Statement</div>
+<div class="step successful">When is the String &quot;x = x+y;&quot; is parsed by the JavaParser using parseStatement</div>
+<div class="step successful">Then Statement toString is &quot;x = x + y;&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Adding declarations to a TryStmt it is set as the parent of all provided declarations</h2>
+<div class="step successful">Given a TryStmt</div>
+<div class="step successful">Given a List of VariableDeclarations</div>
+<div class="step successful">When the List of VariableDeclarations are set as the resources on TryStmt</div>
+<div class="step successful">Then all the VariableDeclarations parent is the TryStmt</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Creating a complete CompilationUnit</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the package declaration is set to &quot;japa.parser.ast.manipulation&quot;</div>
+<div class="step successful">When a public class called &quot;CreateClass&quot; is added to the CompilationUnit</div>
+<div class="step successful">When a public static method called &quot;main&quot; returning void is added to class <span class="step parameter">1</span> in the compilation unit</div>
+<div class="step successful">When <span class="step parameter">String</span> varargs called &quot;args&quot; are added to method <span class="step parameter">1</span> in class <span class="step parameter">1</span></div>
+<div class="step successful">When a BlockStmt is added to method <span class="step parameter">1</span> in class <span class="step parameter">1</span></div>
+<div class="step successful">When System.out.println(&quot;Hello World!&quot;); is added to the body of method <span class="step parameter">1</span> in class <span class="step parameter">1</span></div>
+<div class="step successful">Then the expected source should be:
+package japa.parser.ast.manipulation;
+
+public class CreateClass {
+
+    public static void main(String... args) {
+        System.out.println(&quot;Hello World!&quot;);
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Change the name of a method to be uppercase</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.ast.manipulation;
+
+public class UpdateMethod {
+
+    public void changeToUpperCase(){}
+
+    public void anotherMethodToChange(){}
+}</div>
+<div class="step successful">When method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has it's name converted to uppercase</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has the name &quot;CHANGETOUPPERCASE&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Change the name of all methods to be uppercase using a visitor</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.ast.manipulation;
+
+public class UpdateMethod {
+
+    public void changeToUpperCase(){}
+
+    public void anotherMethodToChange(){}
+}</div>
+<div class="step successful">Given a ChangeNameToUpperCaseVisitor</div>
+<div class="step successful">When the ChangeNameToUpperCaseVisitor visits to compilation unit</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has the name &quot;CHANGETOUPPERCASE&quot;</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has the name &quot;ANOTHERMETHODTOCHANGE&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Add int arguments to a method</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.ast.manipulation;
+
+public class UpdateMethod {
+
+    public void changeToUpperCase(String parameter){}
+
+    public void anotherMethodToChange(){}
+}</div>
+<div class="step successful">When method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has an int parameter called &quot;value&quot; added</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">1</span> parameters</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">1</span> parameter</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> parameter <span class="step parameter">1</span> is type int called &quot;value&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Add int arguments to all methods using a visitor</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.ast.manipulation;
+
+public class UpdateMethod {
+
+    public void changeToUpperCase(String parameter){}
+
+    public void anotherMethodToChange(){}
+}</div>
+<div class="step successful">Given a AddNewIntParameterCalledValueVisitor</div>
+<div class="step successful">When the AddNewIntParameterCalledValueVisitor visits to compilation unit</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">2</span> parameters</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">1</span> parameter</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> parameter <span class="step parameter">2</span> is type int called &quot;value&quot;</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> parameter <span class="step parameter">1</span> is type int called &quot;value&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Clone a compilation unit</h2>
+<div class="step successful">Given a CompilationUnit</div>
+<div class="step successful">When the following source is parsed:
+package japa.parser.ast.manipulation;
+
+public class UpdateMethod {
+
+    public void changeToUpperCase(String parameter){}
+
+    public void anotherMethodToChange(){}
+}</div>
+<div class="step successful">When the compilation unit is cloned</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has the name &quot;changeToUpperCase&quot;</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">1</span> parameters</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">0</span> parameter</div>
+</div>
+</div>
+
+</body>
+<!--  SyntaxHighlighter resources:  should be included at end of body -->
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shCore.css"/>
+<link rel="stylesheet" type="text/css" href="./style/sh-3.0.83/shThemeRDark.css"/>
+<script language="javascript" src="./js/sh-3.0.83/shCore.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushBash.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushCss.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushDiff.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushGroovy.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJava.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushJScript.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPlain.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushPython.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushRuby.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushScala.js"></script>
+<script language="javascript" src="./js/sh-3.0.83/shBrushXml.js"></script>
+<script language="javascript" src="./js/shBrushBdd.js"></script>
+<script type="text/javascript">
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['toolbar'] = false;    
+    SyntaxHighlighter.all();
+</script>
+</html>

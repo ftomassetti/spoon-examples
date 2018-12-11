@@ -1,0 +1,476 @@
+<div class="story">
+<h1></h1>
+<div class="path">com/github/javaparser/bdd/comment_attribution_scenarios.story</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments is processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+public class ClassWithLineComments {
+
+    public void aMethod(){
+        // first comment
+        int a=0; // second comment
+        // third comment
+        // fourth comment
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit is not commented</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">0</span> orphan comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">0</span> orphan comments</div>
+<div class="step successful">Then block statement in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then block statement in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">3</span> orphan comments</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments is processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+/**Javadoc associated with the class*/
+public class ClassWithOrphanComments {
+    //a first comment floating in the class
+
+    //comment associated to the method
+    void foo(){
+        /*comment floating inside the method*/
+    }
+
+    //a second comment floating in the class
+}
+
+//Orphan comment inside the CompilationUnit</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit is not commented</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">6</span> contained comments</div>
+<div class="step successful">Then the compilation unit orphan comment <span class="step parameter">1</span> is &quot;Orphan comment inside the CompilationUnit&quot;</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot;a first comment floating in the class&quot;</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">2</span> is &quot;a second comment floating in the class&quot;</div>
+<div class="step successful">Then class <span class="step parameter">1</span> is commented &quot;Javadoc associated with the class&quot;</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">0</span> orphan comments</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot;comment associated to the method&quot;</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is &quot;comment floating inside the method&quot;</div>
+<div class="step successful">Then block statement in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot;comment floating inside the method&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Orphan Comment in Class Declaration is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+class /*Comment1*/ A {
+    //comment2
+    // comment3
+    int a;
+    /**comment4
+    *
+    * */
+    //comment5
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then class <span class="step parameter">1</span> is not commented</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot;Comment2&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments in Multiple Methods is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+public class ClassWithLineCommentsInMultipleMethods {
+
+    public void aMethod() {
+        // first comment
+        int a = 0; //second comment
+        // third comment
+        // fourth comment
+    }
+
+    public void anotherMethod() {
+        // a unique comment
+        // first comment
+        int a = 0; //second comment
+        // third comment
+        // fourth comment
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">9</span> contained comments</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">0</span> orphan comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> is not commented</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">9</span> total contained comments</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">0</span> orphan comments</div>
+<div class="step successful">Then block statement in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then block statement in method <span class="step parameter">1</span> in class <span class="step parameter">1</span> has <span class="step parameter">3</span> orphan comments</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">5</span> total contained comments</div>
+<div class="step successful">Then method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">0</span> orphan comments</div>
+<div class="step successful">Then block statement in method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">5</span> total contained comments</div>
+<div class="step successful">Then block statement in method <span class="step parameter">2</span> in class <span class="step parameter">1</span> has <span class="step parameter">4</span> orphan comments</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments in Multiple Methods is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+public class ClassWithLineCommentInsideBlockComment {
+
+    /* comment to a method */
+    void foo(){}
+
+    /*// Line Comment put immediately after block comment
+
+    //// Comment debauchery
+
+    another orphan.
+    It spans over more lines */
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot; comment to a method &quot;</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot;// Line Comment put immediately after block comment
+
+                                  //// Comment debauchery
+
+                                  another orphan.
+                                  It spans over more lines &quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments on Fields is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+public class Issue43 {
+    //Case 1
+    private String field1 = null; //field1
+
+    //Case 2
+    private String field2
+            = null; //field2
+
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">4</span> contained comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">4</span> total contained comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">1</span> orphan comment</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot;Case 1&quot;</div>
+<div class="step successful">Then field <span class="step parameter">1 in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments
+!--Then field 2</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+<div class="step successful">Then field <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot;field1&quot;</div>
+<div class="step successful">Then field <span class="step parameter">2</span> in class <span class="step parameter">1</span> is commented &quot;Case 2&quot;</div>
+<div class="step successful">Then variable <span class="step parameter">1</span> value of field <span class="step parameter">2</span> in class <span class="step parameter">1</span> is commented &quot;field2&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Another Class With Line Comments on Fields is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.comments;
+
+public class Issue43variant {
+    private String field1 = null; //field1
+
+    private String field2
+            = null; //field2
+
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">2</span> contained comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">2</span> total contained comments</div>
+<div class="step successful">Then field <span class="step parameter">1 in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments
+!--Then field 2</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+<div class="step successful">Then field <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot;field1&quot;</div>
+<div class="step successful">Then variable <span class="step parameter">1</span> value of field <span class="step parameter">2</span> in class <span class="step parameter">1</span> is commented &quot;field2&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Mixed Comments on Fields is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+package japa.parser.javacc;
+public class Teste {
+    //line comment1
+    int a = 0; //line comment2
+    int b = 0; //line comment3
+    int c = 0; /* multi-line
+                * comment
+                */
+    int d = 0; /** multi-line
+                * javadoc */
+    int e = 0;
+}
+//final comment</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">6</span> contained comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">5</span> total contained comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot;line comment1&quot;</div>
+<div class="step successful">Then field <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot;line comment2&quot;</div>
+<div class="step successful">Then field <span class="step parameter">2</span> in class <span class="step parameter">1</span> is commented &quot;line comment3&quot;</div>
+<div class="step successful">Then field <span class="step parameter">3</span> in class <span class="step parameter">1</span> is not commented</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Comment with a preceding line space is an orphan</h2>
+<div class="step successful">Given the class:
+//comment
+
+class A {}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit orphan <span class="step parameter">comment</span> <span class="step parameter">1</span> is &quot;comment&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Comment without a preceding line space is associated to class</h2>
+<div class="step successful">Given the class:
+//comment
+class A {}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then class <span class="step parameter">1</span> is commented &quot;comment&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Comments after Javadoc are attributed to the method if flag is active</h2>
+<div class="step successful">Given the class:
+class Issue40{
+    @GET
+    @Path(&quot;original&quot;)
+    /**
+    * Return the original user.
+    */
+    public User getOriginalUser(String userName) {
+        return userService.getOriginalUser(userName);
+    }
+}</div>
+<div class="step successful">When the do not consider annotations as node start for code attribution is <span class="step parameter">true</span> on the Java parser</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot;* Return the original user.&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: Comments after Javadoc are attributed to the method if flag is not active</h2>
+<div class="step successful">Given the class:
+class Issue40{
+    @GET
+    @Path(&quot;original&quot;)
+    /**
+    * Return the original user.
+    */
+    public User getOriginalUser(String userName) {
+        return userService.getOriginalUser(userName);
+    }
+}</div>
+<div class="step successful">When the do not consider annotations as node start for code attribution is <span class="step parameter">false</span> on the Java parser</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then type of method <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot;* Return the original user.&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With Line Comments is processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+/*CompilationUnitComment*/
+package japa.parser.comments;
+
+public class ClassWithMixedStyleComments {
+    // line comment
+    int a = 0;
+    // another line comment
+    int b = 0;
+    // line comment
+    int c = 0;
+    /* multi-line
+       comment
+    */
+    int d = 0;
+    /**
+     * multi-line
+     */
+    int e = 0;
+    // final comment
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation is commented &quot;CompilationUnitComment&quot;</div>
+<div class="step successful">Then class <span class="step parameter">1</span> is not commented</div>
+<div class="step successful">Then class <span class="step parameter">1</span> has <span class="step parameter">6</span> total contained comments</div>
+<div class="step successful">Then class <span class="step parameter">1</span> orphan comment <span class="step parameter">1</span> is &quot; final comment&quot;</div>
+<div class="step successful">Then field <span class="step parameter">1</span> in class <span class="step parameter">1</span> is commented &quot; line comment&quot;</div>
+<div class="step successful">Then field <span class="step parameter">1</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+<div class="step successful">Then field <span class="step parameter">2</span> in class <span class="step parameter">1</span> is commented &quot; another line comment&quot;</div>
+<div class="step successful">Then field <span class="step parameter">2</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+<div class="step successful">Then field <span class="step parameter">3</span> in class <span class="step parameter">1</span> is commented &quot; line comment&quot;</div>
+<div class="step successful">Then field <span class="step parameter">3</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+<div class="step successful">Then field <span class="step parameter">4</span> in class <span class="step parameter">1</span> is commented &quot; multi-line comment&quot;</div>
+<div class="step successful">Then field <span class="step parameter">4</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+<div class="step successful">Then field <span class="step parameter">5</span> in class <span class="step parameter">1</span> is commented &quot; * multi-line&quot;</div>
+<div class="step successful">Then field <span class="step parameter">5</span> in class <span class="step parameter">1</span> contains <span class="step parameter">0</span> comments</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with only an orphan comment is processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    // orphan comment&quot;
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit parent is ClassOrInterfaceDeclaration</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A class with only a class comment is processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+/* Comment of the class */
+class A {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit commented node is ClassOrInterfaceDeclaration</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class With two comments at class level is processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+/* Orphan comment */
+/* Comment of the class */
+class A {
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">2</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is an orphan</div>
+<div class="step successful">Then the compilation unit orphan comment <span class="step parameter">1</span> is &quot;Orphan comment&quot;</div>
+<div class="step successful">Then comment <span class="step parameter">2</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">2</span> in compilation unit commented node is ClassOrInterfaceDeclaration</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class has a comment associated to a field when processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    int a = 0; // comment associated to the field
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit commented node is FieldDeclaration</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class has a comment associated to a the literal when processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    int a
+        = 0; // comment associated to the field
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit commented node is IntegerLiteralExpr</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class with two line comment within a method when processed by the Java Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    void foo() {
+        // a comment
+        int b; // another comment
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">2</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is &quot;a comment&quot;</div>
+<div class="step successful">Then comment <span class="step parameter">2</span> in compilation unit is not an orphan</div>
+<div class="step successful">Then comment <span class="step parameter">2</span> in compilation unit is &quot;another comment&quot;</div>
+<div class="step successful">Then comment <span class="step parameter">2</span> in compilation unit commented node is ExpressionStmt</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class with an inline comment inside a block comment is parsed by the Java Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    /* A block comment that
+    // Contains a line comment
+    */
+    public static void main(String args[]) {
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit is &quot;A block comment that // Contains a line comment&quot;</div>
+</div>
+<div class="scenario">
+<h2>Scenario: A Class with an inline comment inbetween annotation a method declaration is parsed Java Parser</h2>
+<div class="step successful">Given the class:
+class A {
+    @Override
+    // Returns number of vowels in a name
+    public int countVowels(String name) {
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then the compilation unit has <span class="step parameter">1</span> contained comments</div>
+<div class="step successful">Then comment <span class="step parameter">1</span> in compilation unit commented node is PrimitiveType</div>
+</div>
+<div class="scenario">
+<h2>Scenario: We print correctly two consecutive line-comments in a class</h2>
+<div class="step successful">Given the class:
+class A {
+  // foo
+  // bar
+  void aMethod(){}
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A {
+
+    // foo
+    // bar
+    void aMethod() {
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: We print correctly two consecutive line-comments in a method</h2>
+<div class="step successful">Given the class:
+class A {
+  void aMethod(){
+     // foo
+     // bar
+     int a;
+  }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A {
+
+    void aMethod() {
+        // foo
+        // bar
+        int a;
+    }
+}</div>
+</div>
+<div class="scenario">
+<h2>Scenario: We print correctly orphan comments in a for loop</h2>
+<div class="step successful">Given the class:
+class A {
+    public static List calcularResultadoFinal(List avaliacoes) throws SQLException, ClassNotFoundException{
+        for(Avaliacao avaliacao: avaliacoes){
+            // if(avaliacao.obterAprovacao()){
+            // avaliacao.setResultadoFinal(&quot;Aprovado&quot;);
+            // }else{
+            // avaliacao.setResultadoFinal(&quot;Reprovado&quot;);
+            // }
+            avaliacao.setEmAberto(false);
+            avaliacao.editar();
+        }
+        return avaliacoes;
+    }
+}</div>
+<div class="step successful">When the class is parsed by the Java parser</div>
+<div class="step successful">Then it is printed as:
+class A {
+
+    public static List calcularResultadoFinal(List avaliacoes) throws SQLException, ClassNotFoundException {
+        for (Avaliacao avaliacao : avaliacoes) {
+            // if(avaliacao.obterAprovacao()){
+            // avaliacao.setResultadoFinal(&quot;Aprovado&quot;);
+            // }else{
+            // avaliacao.setResultadoFinal(&quot;Reprovado&quot;);
+            // }
+            avaliacao.setEmAberto(false);
+            avaliacao.editar();
+        }
+        return avaliacoes;
+    }
+}</div>
+</div>
+</div>
