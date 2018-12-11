@@ -9,9 +9,12 @@ repositories {
 	maven {
 		url('http://maven.inria.fr/artifactory/triskell-public-release')
 	}
+	maven {
+		url('https://jitpack.io')
+	}
 }
 
 dependencies {
 	compile 'fr.inria.gforge.spoon:spoon-core:7.1.0'
+	compile 'com.github.everit-org.json-schema:org.everit.json.schema:1.9.2'
 }
-
