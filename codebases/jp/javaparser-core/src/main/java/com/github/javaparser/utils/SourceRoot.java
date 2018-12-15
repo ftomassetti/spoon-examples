@@ -62,7 +62,7 @@ public class SourceRoot {
 
     /**
      * @param root the root directory of a set of source files. It corresponds to the root of the package structure of the
-     * source files within, like "javaparser/javaparser-core/src/main/java"
+     * source files within, like "javaparser/javaparser-core/src/com.strumenta.spoonexamples.main/java"
      */
     public SourceRoot(Path root) {
         assertNotNull(root);
@@ -75,7 +75,7 @@ public class SourceRoot {
 
     /**
      * @param root the root directory of a set of source files. It corresponds to the root of the package structure of the
-     * source files within, like "javaparser/javaparser-core/src/main/java"
+     * source files within, like "javaparser/javaparser-core/src/com.strumenta.spoonexamples.main/java"
      */
     public SourceRoot(Path root, ParserConfiguration parserConfiguration) {
         this(root);

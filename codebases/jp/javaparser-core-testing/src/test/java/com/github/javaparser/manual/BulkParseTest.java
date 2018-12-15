@@ -73,13 +73,13 @@ public class BulkParseTest {
     @Test
     public void parseOwnSourceCode() throws IOException {
         String[] roots = new String[]{
-                "javaparser-core/src/main/java",
+                "javaparser-core/src/com.strumenta.spoonexamples.main/java",
                 "javaparser-core-testing/src/test/java",
-                "javaparser-core-generators/src/main/java",
-                "javaparser-core-metamodel-generator/src/main/java",
-                "javaparser-symbol-solver-core/src/main/java",
-                "javaparser-symbol-solver-logic/src/main/java",
-                "javaparser-symbol-solver-model/src/main/java",
+                "javaparser-core-generators/src/com.strumenta.spoonexamples.main/java",
+                "javaparser-core-metamodel-generator/src/com.strumenta.spoonexamples.main/java",
+                "javaparser-symbol-solver-core/src/com.strumenta.spoonexamples.main/java",
+                "javaparser-symbol-solver-logic/src/com.strumenta.spoonexamples.main/java",
+                "javaparser-symbol-solver-model/src/com.strumenta.spoonexamples.main/java",
                 "javaparser-symbol-solver-testing/src/test/java"
         };
         for (String root : roots) {

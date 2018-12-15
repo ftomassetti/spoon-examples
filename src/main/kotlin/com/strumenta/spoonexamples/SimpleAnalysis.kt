@@ -1,7 +1,7 @@
+package com.strumenta.spoonexamples
+
 import spoon.Launcher
 import spoon.reflect.CtModel
-import spoon.reflect.declaration.CtAnnotation
-import spoon.reflect.declaration.CtAnnotationType
 import spoon.reflect.declaration.CtClass
 
 fun printTitle(title: String) {
@@ -24,7 +24,7 @@ fun examineClassesWithManyMethods(ctModel: CtModel, threshold: Int = 20) {
     printTitle("Classes with more than $threshold methods")
     printList(classes.asSequence()
             .sortedByDescending { it.methods.size }
-            .map { "${it.qualifiedName} (${it.methods.size})"})
+            .map { "${it.qualifiedName} (${it.methods.size})" })
     println()
 }
 
@@ -42,7 +42,7 @@ fun verifyTestClassesHaveProperName(ctModel: CtModel) {
 
 fun main(args: Array<String>) {
     val launcher = Launcher()
-    launcher.addInputResource("codebases/jp/javaparser-core/src/main/java")
+    launcher.addInputResource("codebases/jp/javaparser-core/src/com.strumenta.spoonexamples.main/java")
     launcher.addInputResource("codebases/jp/javaparser-core-testing/src/test/java")
     launcher.addInputResource("libs/junit-vintage-engine-4.12.3.jar")
     launcher.environment.noClasspath = true

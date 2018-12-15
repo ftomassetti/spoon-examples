@@ -148,7 +148,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/main/javacc-support</source>
+                                <source>src/com.strumenta.spoonexamples.main/javacc-support</source>
                             </sources>
                         </configuration>
                     </execution>

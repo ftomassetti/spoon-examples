@@ -17,16 +17,16 @@ public class ParserCollectionStrategyTest {
     @Test
     public void getSourceRoots() {
         assertFalse(projectRoot.getSourceRoots().size() == 0);
-        assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve("javaparser-core/src/main/java")));
+        assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve("javaparser-core/src/com.strumenta.spoonexamples.main/java")));
         assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve
-                ("javaparser-core-generators/src/main/java")));
+                ("javaparser-core-generators/src/com.strumenta.spoonexamples.main/java")));
         assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve
-                ("javaparser-core-metamodel-generator/src/main/java")));
+                ("javaparser-core-metamodel-generator/src/com.strumenta.spoonexamples.main/java")));
         assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve
-                ("javaparser-symbol-solver-core/src/main/java")));
+                ("javaparser-symbol-solver-core/src/com.strumenta.spoonexamples.main/java")));
         assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve
-                ("javaparser-symbol-solver-logic/src/main/java")));
+                ("javaparser-symbol-solver-logic/src/com.strumenta.spoonexamples.main/java")));
         assertNotEquals(Optional.empty(), projectRoot.getSourceRoot(root.resolve
-                ("javaparser-symbol-solver-model/src/main/java")));
+                ("javaparser-symbol-solver-model/src/com.strumenta.spoonexamples.main/java")));
     }
 }

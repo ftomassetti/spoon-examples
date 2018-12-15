@@ -330,7 +330,7 @@ public class StringEscapeUtils {
      * For example, "\45" should go back to being the specific value (a %).
      * <p>
      * Note that this currently only supports the viable range of octal for Java; namely
-     * 1 to 377. This is because parsing Java is the main use case.
+     * 1 to 377. This is because parsing Java is the com.strumenta.spoonexamples.main use case.
      *
      * @since 3.0
      */

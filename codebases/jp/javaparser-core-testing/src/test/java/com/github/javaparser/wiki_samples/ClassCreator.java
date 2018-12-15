@@ -63,7 +63,7 @@ public class ClassCreator {
 
         // create a method
         EnumSet<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC);
-        MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), "main");
+        MethodDeclaration method = new MethodDeclaration(modifiers, new VoidType(), "com.strumenta.spoonexamples.main");
         modifiers.add(Modifier.STATIC);
         method.setModifiers(modifiers);
         type.addMember(method);

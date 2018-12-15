@@ -16,10 +16,10 @@ public class TestComments {
      */
     public void someTestMethod() {}
 
-    public static void main(String[] args) throws Exception {
+    public static void com.strumenta.spoonexamples.main(String[] args) throws Exception {
         // Correct path so that it will point to the file with this code
         try (FileInputStream in = new FileInputStream(
-                new File(".\\src\\main\\java\\org\\test\\TestComments.java"))) {
+                new File(".\\src\\com.strumenta.spoonexamples.main\\java\\org\\test\\TestComments.java"))) {
             CompilationUnit compilationUnit = JavaParser.parse(in);
 
             new VoidVisitorAdapter<Object>() {

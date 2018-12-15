@@ -31,7 +31,7 @@ import static com.github.javaparser.utils.Utils.assertNonEmpty;
 /**
  * A node with a type.
  * <p>
- * The main reason for this interface is to permit users to manipulate homogeneously all nodes with getType/setType
+ * The com.strumenta.spoonexamples.main reason for this interface is to permit users to manipulate homogeneously all nodes with getType/setType
  * methods
  *
  * @since 2.3.1

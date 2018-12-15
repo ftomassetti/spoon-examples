@@ -226,7 +226,7 @@ public class JavaParserTest {
     @Test
     public void everyTokenHasACategory() throws IOException {
         final int tokenCount = GeneratedJavaParserConstants.tokenImage.length;
-        Path tokenTypesPath = mavenModuleRoot(JavaParserTest.class).resolve("../javaparser-core/src/main/java/com/github/javaparser/TokenTypes.java");
+        Path tokenTypesPath = mavenModuleRoot(JavaParserTest.class).resolve("../javaparser-core/src/com.strumenta.spoonexamples.main/java/com/github/javaparser/TokenTypes.java");
         CompilationUnit tokenTypesCu = JavaParser.parse(tokenTypesPath);
         // -1 to take off the default: case.
         int switchEntries = tokenTypesCu.findAll(SwitchEntryStmt.class).size() - 1;

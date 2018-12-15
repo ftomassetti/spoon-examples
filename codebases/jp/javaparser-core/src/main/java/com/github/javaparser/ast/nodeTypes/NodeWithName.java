@@ -30,7 +30,7 @@ import static com.github.javaparser.utils.Utils.assertNonEmpty;
 /**
  * A node with a (qualified) name.
  * <p>
- * The main reason for this interface is to permit users to manipulate homogeneously all nodes with a getName method.
+ * The com.strumenta.spoonexamples.main reason for this interface is to permit users to manipulate homogeneously all nodes with a getName method.
  *
  * @since 2.0.1
  */

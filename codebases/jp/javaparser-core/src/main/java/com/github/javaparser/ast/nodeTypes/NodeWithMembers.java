@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * A node having members.
  * <p>
- * The main reason for this interface is to permit users to manipulate homogeneously all nodes with a getMembers
+ * The com.strumenta.spoonexamples.main reason for this interface is to permit users to manipulate homogeneously all nodes with a getMembers
  * method.
  */
 public interface NodeWithMembers<N extends Node> {
