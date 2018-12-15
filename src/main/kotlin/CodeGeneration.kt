@@ -44,9 +44,14 @@ private fun Schema.toType(packag: CtPackage, name: String? = null): CtTypeRefere
                 it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
             }
         }
-        is ArraySchema -> CtArrayTypeReferenceImpl<Any>().let {
-            it.setComponentType<CtArrayTypeReference<Any>>(this.allItemSchema.toType(packag))
+        is ArraySchema -> CtTypeReferenceImpl<Any>().let {
+            it.setSimpleName<CtTypeReference<*>>("List")
+            it.setPackage<CtTypeReference<Any>>(CtPackageReferenceImpl().setTo("java.util"))
+            it.setActualTypeArguments<CtTypeReference<Any>>(listOf(this.allItemSchema.toType(packag)))
         }
+//        is ArraySchema -> CtArrayTypeReferenceImpl<Any>().let {
+//            it.setComponentType<CtArrayTypeReference<Any>>(this.allItemSchema.toType(packag))
+//        }
         is StringSchema -> CtTypeReferenceImpl<Any>().let {
             it.setSimpleName<CtTypeReference<*>>("String")
             it.setPackage<CtTypeReference<Any>>(CtPackageReferenceImpl().setTo("java.lang"))
