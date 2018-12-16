@@ -1,6 +1,7 @@
 package com.strumenta.spoonexamples
 
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.everit.json.schema.*
 import org.everit.json.schema.loader.SchemaLoader
@@ -36,7 +37,7 @@ fun CtClass<*>.addProperty(packag: CtPackage, name: String, schema: Schema) {
 
 private fun Schema.toType(packag: CtPackage, name: String? = null): CtTypeReference<Any> {
     return when (this) {
-        is ObjectSchema -> CtClassImpl<Any>().let {ctClass ->
+        is ObjectSchema -> CtClassImpl<Any>().let { ctClass ->
             packag.types.add(ctClass)
             ctClass.setParent(packag)
             ctClass.setVisibility<CtModifiable>(ModifierKind.PUBLIC)
@@ -45,7 +46,7 @@ private fun Schema.toType(packag: CtPackage, name: String? = null): CtTypeRefere
                 ctClass.addProperty(packag, it.key, it.value)
             }
             addUnserializeMethod(ctClass, this)
-            addSerializeMethod(ctClass, this)
+            addSerializeMethod(ctClass, this, packag, name)
             CtTypeReferenceImpl<Any>().let {
                 it.setPackage<CtTypeReferenceImpl<Any>>(ctClass.`package`.reference)
                 it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
@@ -64,26 +65,18 @@ private fun Schema.toType(packag: CtPackage, name: String? = null): CtTypeRefere
 
 
 
-fun jsonElementType() =  CtTypeReferenceImpl<Any>().let {
-    it.setSimpleName<CtTypeReferenceImpl<Any>>("JsonElement")
-    it.setPackage<CtTypeReference<Any>>(CtPackageReferenceImpl().setTo("com.google.gson"))
-    it
-}
+fun jsonElementType() =  createTypeReference(JsonElement::class.java)
+fun jsonArrayType() =  createTypeReference(JsonArray::class.java)
+fun jsonObjectType() = createTypeReference(JsonObject::class.java)
 
-fun jsonObjectType() =  CtTypeReferenceImpl<Any>().let {
-    it.setSimpleName<CtTypeReferenceImpl<Any>>("JsonObject")
-    it.setPackage<CtTypeReference<Any>>(CtPackageReferenceImpl().setTo("com.google.gson"))
-    it
-}
-
-fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) {
+fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, packag: CtPackage, name: String? = null) {
     val method = CtMethodImpl<Any>().let {
         it.setVisibility<CtModifiable>(ModifierKind.PUBLIC)
         it.setType<CtTypedElement<Any>>(jsonObjectType())
         it.setSimpleName<CtMethod<Any>>("serialize")
         val statements = LinkedList<CtStatement>()
         statements.add(createLocalVar("res", jsonObjectType(), objectInstance(jsonObjectType())))
-        objectSchema.propertySchemas.forEach { statements.addAll(addSerializeStmts(it)) }
+        objectSchema.propertySchemas.forEach { statements.addAll(addSerializeStmts(it, packag, name)) }
         statements.add(returnStmt(localVarRef("res")))
         it.setBodyBlock(statements)
         it
@@ -91,23 +84,38 @@ fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) {
     ctClass.addMethod<Any, CtType<Any>>(method)
 }
 
-fun addSerializeStmts(entry: Map.Entry<String, Schema>): Collection<CtStatement> {
-    val ja = JsonArray()
+fun addSerializeStmts(entry: Map.Entry<String, Schema>, packag: CtPackage, name: String? = null): Collection<CtStatement> {
     return when (entry.value) {
         is StringSchema -> listOf(
-            methodCall("addProperty", listOf(
+                instanceMethodCall("addProperty", listOf(
                     stringLiteral(entry.key),
                     fieldRef(entry.key)
             ), target=localVarRef("res"))
         )
         is BooleanSchema -> listOf(
-                methodCall("addProperty", listOf(
+                instanceMethodCall("addProperty", listOf(
                         stringLiteral(entry.key),
                         fieldRef(entry.key)
                 ), target=localVarRef("res"))
         )
         is ArraySchema -> listOf(
-
+                createBlock(listOf(
+                        createLocalVar("jsonArray", jsonArrayType(), objectInstance(jsonArrayType())),
+                        CtForEachImpl().let {
+                            it.setVariable<CtForEach>(createLocalVar("element", (entry.value as ArraySchema).allItemSchema.toType(packag, name)))
+                            it.setExpression<CtForEach>(fieldRef(entry.key))
+                            it.setBody<CtBodyHolder>(createBlock(listOf(
+                                instanceMethodCall("add", listOf(
+                                        staticMethodCall("serialize", listOf(localVarRef("element")))
+                                ), target= localVarRef("jsonArray"))
+                            )))
+                            it
+                        },
+                        instanceMethodCall("addProperty", listOf(
+                                stringLiteral(entry.key),
+                                localVarRef("jsonArray")),
+                                target=localVarRef("res"))
+                ))
         )
         else -> throw UnsupportedOperationException("Unknown schema: ${entry.value.javaClass.canonicalName}")
     }

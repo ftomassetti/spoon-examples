@@ -38,20 +38,21 @@ fun voidType() = CtTypeReferenceImpl<Any>().let {
 }
 
 fun <R> CtExecutableImpl<R>.setBodyBlock(vararg statements: CtStatement) {
-    this.setBody<CtBodyHolder>(CtBlockImpl<Any>().let { block ->
-        statements.forEach { block.addStatement<CtStatementList>(it) }
-        block
-    })
+    this.setBody<CtBodyHolder>(createBlock(statements.toList()))
 }
 
 fun <R> CtExecutableImpl<R>.setBodyBlock(statements: List<CtStatement>) {
-    this.setBody<CtBodyHolder>(CtBlockImpl<Any>().let { block ->
-        statements.forEach { block.addStatement<CtStatementList>(it) }
-        block
-    })
+    this.setBody<CtBodyHolder>(createBlock(statements))
 }
 
-fun createLocalVar(name: String, type: CtTypeReferenceImpl<Any>, value: CtExpression<Any>? = null) : CtLocalVariable<Any> {
+fun createBlock(statements: List<CtStatement>) : CtBlock<Any> {
+    return CtBlockImpl<Any>().let { block ->
+        statements.forEach { block.addStatement<CtStatementList>(it) }
+        block
+    }
+}
+
+fun createLocalVar(name: String, type: CtTypeReference<Any>, value: CtExpression<Any>? = null) : CtLocalVariable<Any> {
     return CtLocalVariableImpl<Any>().let {
         it.setSimpleName<CtNamedElement>(name)
         it.setType<CtTypedElement<Any>>(type)
@@ -62,7 +63,7 @@ fun createLocalVar(name: String, type: CtTypeReferenceImpl<Any>, value: CtExpres
     }
 }
 
-fun objectInstance(type: CtTypeReferenceImpl<Any>) : CtConstructorCall<Any> {
+fun objectInstance(type: CtTypeReference<Any>) : CtConstructorCall<Any> {
     return CtConstructorCallImpl<Any>().let {
         it.setType<CtTypedElement<Any>>(type)
         it
@@ -94,7 +95,23 @@ fun stringLiteral(value: String) : CtLiteral<Any> = CtLiteralImpl<Any>().let {
     it
 }
 
-fun methodCall(methodName: String, params: List<CtExpression<Any>>, target: CtExpression<Any>? = null) : CtInvocation<Any> {
+fun instanceMethodCall(methodName: String, params: List<CtExpression<Any>>, target: CtExpression<Any>? = null) : CtInvocation<Any> {
+    return CtInvocationImpl<Any>().let {
+        if (target != null) {
+            it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(target)
+        }
+        it.setExecutable<CtAbstractInvocation<Any>>(
+                CtExecutableReferenceImpl<Any>().let {
+                    it.setSimpleName<CtReference>(methodName)
+                    it
+                }
+        )
+        it.setArguments<CtAbstractInvocation<Any>>(params)
+        it
+    }
+}
+
+fun staticMethodCall(methodName: String, params: List<CtExpression<Any>>, target: CtExpression<Any>? = null) : CtInvocation<Any> {
     return CtInvocationImpl<Any>().let {
         if (target != null) {
             it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(target)
