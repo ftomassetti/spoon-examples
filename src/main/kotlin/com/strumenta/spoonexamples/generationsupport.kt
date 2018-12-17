@@ -3,6 +3,7 @@ package com.strumenta.spoonexamples
 import spoon.reflect.code.*
 import spoon.reflect.declaration.CtNamedElement
 import spoon.reflect.declaration.CtTypedElement
+import spoon.reflect.reference.CtExecutableReference
 import spoon.reflect.reference.CtPackageReference
 import spoon.reflect.reference.CtReference
 import spoon.reflect.reference.CtTypeReference
@@ -111,13 +112,12 @@ fun instanceMethodCall(methodName: String, params: List<CtExpression<Any>>, targ
     }
 }
 
-fun staticMethodCall(methodName: String, params: List<CtExpression<Any>>, target: CtExpression<Any>? = null) : CtInvocation<Any> {
+fun staticMethodCall(methodName: String, params: List<CtExpression<Any>>, target: CtTypeReference<Any>) : CtInvocation<Any> {
     return CtInvocationImpl<Any>().let {
-        if (target != null) {
-            it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(target)
-        }
         it.setExecutable<CtAbstractInvocation<Any>>(
                 CtExecutableReferenceImpl<Any>().let {
+                    it.setDeclaringType<CtExecutableReference<Any>>(createTypeReference("ciao"))
+                    it.setStatic<CtExecutableReference<Any>>(true)
                     it.setSimpleName<CtReference>(methodName)
                     it
                 }

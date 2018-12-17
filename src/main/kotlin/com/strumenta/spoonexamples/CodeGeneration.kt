@@ -13,10 +13,7 @@ import spoon.reflect.reference.CtPackageReference
 import spoon.reflect.reference.CtReference
 import spoon.reflect.reference.CtTypeReference
 import spoon.support.reflect.code.*
-import spoon.support.reflect.declaration.CtClassImpl
-import spoon.support.reflect.declaration.CtFieldImpl
-import spoon.support.reflect.declaration.CtMethodImpl
-import spoon.support.reflect.declaration.CtPackageImpl
+import spoon.support.reflect.declaration.*
 import spoon.support.reflect.reference.CtExecutableReferenceImpl
 import spoon.support.reflect.reference.CtLocalVariableReferenceImpl
 import spoon.support.reflect.reference.CtPackageReferenceImpl
@@ -106,7 +103,7 @@ fun addSerializeStmts(entry: Map.Entry<String, Schema>, packag: CtPackage, name:
                             it.setExpression<CtForEach>(fieldRef(entry.key))
                             it.setBody<CtBodyHolder>(createBlock(listOf(
                                 instanceMethodCall("add", listOf(
-                                        staticMethodCall("serialize", listOf(localVarRef("element")))
+                                        staticMethodCall("serialize", listOf(localVarRef("element")), createTypeReference("com.strumenta.json.SerializationUtils"))
                                 ), target= localVarRef("jsonArray"))
                             )))
                             it
@@ -124,7 +121,13 @@ fun addSerializeStmts(entry: Map.Entry<String, Schema>, packag: CtPackage, name:
 fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) {
     val method = CtMethodImpl<Any>().let {
         it.setType<CtTypedElement<Any>>(voidType())
+        it.setModifiers<CtModifiable>(setOf(ModifierKind.STATIC, ModifierKind.PUBLIC))
         it.setSimpleName<CtMethod<Any>>("unserialize")
+        it.setParameters<CtExecutable<Any>>(listOf(CtParameterImpl<Any>().let {
+            it.setSimpleName<CtNamedElement>("json")
+            it.setType<CtTypedElement<Any>>(jsonElementType())
+            it
+        }))
         it
     }
     ctClass.addMethod<Any, CtType<Any>>(method)
