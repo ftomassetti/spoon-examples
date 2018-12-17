@@ -128,6 +128,11 @@ fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) 
             it.setType<CtTypedElement<Any>>(jsonElementType())
             it
         }))
+        val thisClass = createTypeReference(ctClass.qualifiedName)
+        it.setBody<CtBodyHolder>(createBlock(listOf(
+            createLocalVar("res", thisClass, objectInstance(thisClass)),
+            returnStmt(localVarRef("res"))
+        )))
         it
     }
     ctClass.addMethod<Any, CtType<Any>>(method)
