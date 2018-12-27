@@ -7,73 +7,94 @@ import org.everit.json.schema.*
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONObject
 import org.json.JSONTokener
-import spoon.reflect.code.*
+import spoon.reflect.code.CtBodyHolder
+import spoon.reflect.code.CtForEach
+import spoon.reflect.code.CtStatement
 import spoon.reflect.declaration.*
-import spoon.reflect.reference.CtPackageReference
-import spoon.reflect.reference.CtReference
 import spoon.reflect.reference.CtTypeReference
-import spoon.support.reflect.code.*
+import spoon.reflect.visitor.DefaultJavaPrettyPrinter
+import spoon.support.StandardEnvironment
+import spoon.support.reflect.code.CtForEachImpl
+import spoon.support.reflect.cu.CompilationUnitImpl
 import spoon.support.reflect.declaration.*
-import spoon.support.reflect.reference.CtExecutableReferenceImpl
-import spoon.support.reflect.reference.CtLocalVariableReferenceImpl
-import spoon.support.reflect.reference.CtPackageReferenceImpl
 import spoon.support.reflect.reference.CtTypeReferenceImpl
-import java.lang.UnsupportedOperationException
+import java.io.InputStream
 import java.util.*
 
 class Dummy
 
-fun CtClass<*>.addProperty(packag: CtPackage, name: String, schema: Schema) {
+fun CtClass<*>.addProperty(name: String, schema: Schema, classProvider: ClassProvider) {
     val field = CtFieldImpl<Any>().let {
         it.setSimpleName<CtField<Any>>(name)
-        it.setType<CtField<Any>>(schema.toType(packag))
+        it.setType<CtField<Any>>(schema.toType(classProvider))
         it.setVisibility<CtField<Any>>(ModifierKind.PRIVATE)
     }
     this.addField<Any, Nothing>(field)
+
+    // TODO generate getters
+    // TODO generate setters
 }
 
-private fun Schema.toType(packag: CtPackage, name: String? = null): CtTypeReference<Any> {
+private fun Schema.toType(classProvider: ClassProvider): CtTypeReference<Any> {
     return when (this) {
-        is ObjectSchema -> CtClassImpl<Any>().let { ctClass ->
-            packag.types.add(ctClass)
-            ctClass.setParent(packag)
-            ctClass.setVisibility<CtModifiable>(ModifierKind.PUBLIC)
-            ctClass.setSimpleName<CtClass<Any>>(name ?: this.schemaLocation.split("/").last().capitalize())
-            this.propertySchemas.forEach {
-                ctClass.addProperty(packag, it.key, it.value)
-            }
-            addUnserializeMethod(ctClass, this)
-            addSerializeMethod(ctClass, this, packag, name)
-            CtTypeReferenceImpl<Any>().let {
-                it.setPackage<CtTypeReferenceImpl<Any>>(ctClass.`package`.reference)
-                it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
-            }
-        }
+        is ObjectSchema -> classProvider.typeReference(this)
         is ArraySchema -> createTypeReference(List::class.java).let {
-            it.setActualTypeArguments<CtTypeReference<Any>>(listOf(this.allItemSchema.toType(packag)))
+            it.setActualTypeArguments<CtTypeReference<Any>>(listOf(this.allItemSchema.toType(classProvider)))
             it
         }
         is StringSchema -> createTypeReference(String::class.java)
         is BooleanSchema -> createTypeReference(Boolean::class.java)
-        is ReferenceSchema -> referredSchema.toType(packag)
-        else -> TODO("not implemented: ${this.javaClass}") //To change body of created functions use File | Settings | File Templates.
+        is ReferenceSchema -> referredSchema.toType(classProvider)
+        else -> TODO("not implemented: ${this.javaClass}")
     }
 }
 
+private fun Schema.generateClassRecursively(classProvider: ClassProvider, name: String? = null) {
+    when (this) {
+        is ObjectSchema -> {
+            classProvider.register(this, this.generateClass(classProvider, name))
+            this.propertySchemas.forEach { it.value.generateClassRecursively(classProvider) }
+        }
+        is ArraySchema -> this.allItemSchema.generateClassRecursively(classProvider)
+        is StringSchema, is BooleanSchema -> null
+        is ReferenceSchema -> this.referredSchema.generateClassRecursively(classProvider)
+        else -> TODO("not implemented: ${this.javaClass}")
+    }
+}
 
+private fun ObjectSchema.generateClass(classProvider: ClassProvider, name: String? = null)
+        : CtClass<Any> {
+    return CtClassImpl<Any>().let { ctClass ->
+        val packag = classProvider.pack
+        packag.types.add(ctClass)
+        ctClass.setParent(packag)
+        ctClass.setVisibility<CtModifiable>(ModifierKind.PUBLIC)
+        ctClass.setSimpleName<CtClass<Any>>(name ?: this.schemaLocation.split("/").last().capitalize())
+        this.propertySchemas.forEach {
+            ctClass.addProperty(it.key, it.value, classProvider)
+        }
+        addSerializeMethod(ctClass, this, classProvider)
+        // addUnserializeMethod(ctClass, this)
+        CtTypeReferenceImpl<Any>().let {
+            it.setPackage<CtTypeReferenceImpl<Any>>(ctClass.`package`.reference)
+            it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
+        }
+        ctClass
+    }
+}
 
-fun jsonElementType() =  createTypeReference(JsonElement::class.java)
-fun jsonArrayType() =  createTypeReference(JsonArray::class.java)
-fun jsonObjectType() = createTypeReference(JsonObject::class.java)
+val jsonElementType = createTypeReference(JsonElement::class.java)
+val jsonArrayType =  createTypeReference(JsonArray::class.java)
+val jsonObjectType = createTypeReference(JsonObject::class.java)
 
-fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, packag: CtPackage, name: String? = null) {
+fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, classProvider: ClassProvider) {
     val method = CtMethodImpl<Any>().let {
         it.setVisibility<CtModifiable>(ModifierKind.PUBLIC)
-        it.setType<CtTypedElement<Any>>(jsonObjectType())
+        it.setType<CtTypedElement<Any>>(jsonObjectType)
         it.setSimpleName<CtMethod<Any>>("serialize")
         val statements = LinkedList<CtStatement>()
-        statements.add(createLocalVar("res", jsonObjectType(), objectInstance(jsonObjectType())))
-        objectSchema.propertySchemas.forEach { statements.addAll(addSerializeStmts(it, packag, name)) }
+        statements.add(createLocalVar("res", jsonObjectType, objectInstance(jsonObjectType)))
+        objectSchema.propertySchemas.forEach { statements.addAll(addSerializeStmts(it, classProvider)) }
         statements.add(returnStmt(localVarRef("res")))
         it.setBodyBlock(statements)
         it
@@ -81,7 +102,7 @@ fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, pa
     ctClass.addMethod<Any, CtType<Any>>(method)
 }
 
-fun addSerializeStmts(entry: Map.Entry<String, Schema>, packag: CtPackage, name: String? = null): Collection<CtStatement> {
+fun addSerializeStmts(entry: Map.Entry<String, Schema>, classProvider: ClassProvider): Collection<CtStatement> {
     return when (entry.value) {
         is StringSchema -> listOf(
                 instanceMethodCall("addProperty", listOf(
@@ -97,9 +118,9 @@ fun addSerializeStmts(entry: Map.Entry<String, Schema>, packag: CtPackage, name:
         )
         is ArraySchema -> listOf(
                 createBlock(listOf(
-                        createLocalVar("jsonArray", jsonArrayType(), objectInstance(jsonArrayType())),
+                        createLocalVar("jsonArray", jsonArrayType, objectInstance(jsonArrayType)),
                         CtForEachImpl().let {
-                            it.setVariable<CtForEach>(createLocalVar("element", (entry.value as ArraySchema).allItemSchema.toType(packag, name)))
+                            it.setVariable<CtForEach>(createLocalVar("element", (entry.value as ArraySchema).allItemSchema.toType(classProvider)))
                             it.setExpression<CtForEach>(fieldRef(entry.key))
                             it.setBody<CtBodyHolder>(createBlock(listOf(
                                 instanceMethodCall("add", listOf(
@@ -125,7 +146,7 @@ fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) 
         it.setSimpleName<CtMethod<Any>>("unserialize")
         it.setParameters<CtExecutable<Any>>(listOf(CtParameterImpl<Any>().let {
             it.setSimpleName<CtNamedElement>("json")
-            it.setType<CtTypedElement<Any>>(jsonElementType())
+            it.setType<CtTypedElement<Any>>(jsonElementType)
             it
         }))
         val thisClass = createTypeReference(ctClass.qualifiedName)
@@ -139,34 +160,53 @@ fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) 
 }
 
 fun generateClasses(schema: ObjectSchema, packageName: String, rootClassName: String) {
+    // First we create the classes
     val pack = CtPackageImpl()
     pack.setSimpleName<CtPackage>(packageName)
 
-    schema.toType(pack, rootClassName)
+    val classProvider = ClassProvider(pack)
+    schema.generateClassRecursively(classProvider, rootClassName)
 
-    pack.types.forEach {
-        println(it)
+    // Then we put them in compilation units and we generate them
+    val pp = DefaultJavaPrettyPrinter(StandardEnvironment())
+
+    classProvider.classesForObjectSchemas.forEach {
+        val cu = CompilationUnitImpl()
+        cu.isAutoImport = true
+        cu.declaredPackage = pack
+        cu.declaredTypes = listOf(it.value)
+
+        pp.calculate(cu, listOf(it.value))
+
+        println("== START ==")
+        println(pp.result)
+        println("== END ==")
     }
 }
 
-fun generateJsonSchema() {
-    Dummy::class.java.getResourceAsStream("/a_json_schema.json").use {
-        val rawSchema = JSONObject(JSONTokener(it))
-        val schema = SchemaLoader.load(rawSchema)
-        generateClasses(schema as ObjectSchema, "com.thefruit.company", "FruitThing")
+class ClassProvider(val pack: CtPackage) {
+    val classesForObjectSchemas = HashMap<ObjectSchema, CtClass<Any>>()
+
+    fun register(objectSchema: ObjectSchema, ctClass: CtClass<Any>) {
+        classesForObjectSchemas[objectSchema] = ctClass
     }
+
+    fun typeReference(objectSchema: ObjectSchema): CtTypeReference<Any> {
+        if (objectSchema !in classesForObjectSchemas) {
+            classesForObjectSchemas[objectSchema] = objectSchema.generateClass(this)
+        }
+        return createTypeReference(classesForObjectSchemas[objectSchema]!!)
+    }
+}
+
+fun generateJsonSchema(jsonSchema: InputStream, packageName: String, rootClassName: String) {
+    val rawSchema = JSONObject(JSONTokener(jsonSchema))
+    val schema = SchemaLoader.load(rawSchema) as ObjectSchema
+    generateClasses(schema, packageName, rootClassName)
 }
 
 fun main(args: Array<String>) {
-//    val launcher = Launcher()
-//    launcher.addInputResource("codebases/jp/javaparser-core/src/com.strumenta.spoonexamples.main/java")
-//    launcher.addInputResource("codebases/jp/javaparser-core-testing/src/test/java")
-//    launcher.addInputResource("libs/junit-vintage-engine-4.12.3.jar")
-//    launcher.environment.noClasspath = true
-//    val model = launcher.buildModel()
-//    val expressionClass = model.allTypes.filterIsInstance(CtClass::class.java).first {
-//        it.qualifiedName == "com.github.javaparser.ast.expr.Expression"
-//    }
-
-    generateJsonSchema()
+    Dummy::class.java.getResourceAsStream("/a_json_schema.json").use {
+        generateJsonSchema(it, "com.thefruit.company", "FruitThing")
+    }
 }

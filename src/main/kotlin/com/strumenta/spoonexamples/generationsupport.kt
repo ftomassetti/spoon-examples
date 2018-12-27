@@ -1,6 +1,7 @@
 package com.strumenta.spoonexamples
 
 import spoon.reflect.code.*
+import spoon.reflect.declaration.CtClass
 import spoon.reflect.declaration.CtNamedElement
 import spoon.reflect.declaration.CtTypedElement
 import spoon.reflect.reference.CtExecutableReference
@@ -19,6 +20,8 @@ fun CtPackageReferenceImpl.setTo(packageName: String): CtPackageReferenceImpl {
 }
 
 fun createTypeReference(`class`: Class<*>) = createTypeReference(`class`.canonicalName)
+
+fun createTypeReference(ctClass: CtClass<Any>) = createTypeReference(ctClass.qualifiedName)
 
 fun createTypeReference(canonicalName: String) : CtTypeReference<Any> {
     val pos = canonicalName.indexOfLast { it == '.' }
