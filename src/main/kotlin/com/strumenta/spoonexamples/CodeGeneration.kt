@@ -78,11 +78,7 @@ private fun ObjectSchema.generateClass(classProvider: ClassProvider, name: Strin
             ctClass.addProperty(it.key, it.value, classProvider)
         }
         addSerializeMethod(ctClass, this, classProvider)
-//        // addUnserializeMethod(ctClass, this)
-//        CtTypeReferenceImpl<Any>().let {
-//            it.setPackage<CtTypeReferenceImpl<Any>>(ctClass.`package`.reference)
-//            it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
-//        }
+        addUnserializeMethod(ctClass, this, classProvider)
         ctClass
     }
 }
@@ -114,21 +110,31 @@ fun addSerializeStmts(entry: Map.Entry<String, Schema>,
     ), target= localVarRef("res")))
 }
 
-fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) {
+fun addUnserializeStmts(entry: Map.Entry<String, Schema>,
+                      classProvider: ClassProvider): Collection<CtStatement> {
+    return listOf(instanceMethodCall("set" + entry.key.capitalize(), listOf(
+            staticMethodCall("unserialize",
+                    listOf(instanceMethodCall("get", listOf(stringLiteral(entry.key)), target = localVarRef("json"))),
+                    createTypeReference("com.strumenta.json.SerializationUtils"))
+    ), target= localVarRef("res")))
+}
+
+fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, classProvider: ClassProvider) {
     val method = CtMethodImpl<Any>().let {
-        it.setType<CtTypedElement<Any>>(voidType())
+        it.setType<CtTypedElement<Any>>(createTypeReference(ctClass))
         it.setModifiers<CtModifiable>(setOf(ModifierKind.STATIC, ModifierKind.PUBLIC))
         it.setSimpleName<CtMethod<Any>>("unserialize")
         it.setParameters<CtExecutable<Any>>(listOf(CtParameterImpl<Any>().let {
             it.setSimpleName<CtNamedElement>("json")
-            it.setType<CtTypedElement<Any>>(jsonElementType)
+            it.setType<CtTypedElement<Any>>(jsonObjectType)
             it
         }))
         val thisClass = createTypeReference(ctClass.qualifiedName)
-        it.setBody<CtBodyHolder>(createBlock(listOf(
-            createLocalVar("res", thisClass, objectInstance(thisClass)),
-            returnStmt(localVarRef("res"))
-        )))
+        val statements = LinkedList<CtStatement>()
+        statements.add(createLocalVar("res", thisClass, objectInstance(thisClass)))
+        objectSchema.propertySchemas.forEach { statements.addAll(addUnserializeStmts(it, classProvider)) }
+        statements.add(returnStmt(localVarRef("res")))
+        it.setBodyBlock(statements)
         it
     }
     ctClass.addMethod<Any, CtType<Any>>(method)

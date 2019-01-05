@@ -38,6 +38,7 @@ fun createTypeReference(ctClass: CtClass<Any>) = createTypeReference(ctClass.qua
 fun createTypeReference(canonicalName: String) : CtTypeReference<Any> {
     val pos = canonicalName.indexOfLast { it == '.' }
     return CtTypeReferenceImpl<Any>().let {
+        it.factory = FactoryImpl(DefaultCoreFactory(), StandardEnvironment())
         if (pos == -1) {
             it.setSimpleName<CtTypeReference<*>>(canonicalName)
         } else {

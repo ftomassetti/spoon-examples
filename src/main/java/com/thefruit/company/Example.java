@@ -2,6 +2,7 @@ package com.thefruit.company;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 import java.util.Arrays;
 
@@ -20,5 +21,9 @@ public class Example {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         System.out.println(gson.toJson(ft.serialize()));
+
+        JsonElement serialized = ft.serialize();
+        FruitThing unserializedFt = FruitThing.unserialize(serialized.getAsJsonObject());
+        System.out.println("Fruits: " + unserializedFt.getFruits());
     }
 }
