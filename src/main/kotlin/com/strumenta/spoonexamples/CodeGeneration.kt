@@ -3,6 +3,7 @@ package com.strumenta.spoonexamples
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.strumenta.json.JsonSerializable
 import org.everit.json.schema.*
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONObject
@@ -33,8 +34,8 @@ fun CtClass<*>.addProperty(name: String, schema: Schema, classProvider: ClassPro
     }
     this.addField<Any, Nothing>(field)
 
-    // TODO generate getters
-    // TODO generate setters
+    addGetter(this, field)
+    addSetter(this, field)
 }
 
 private fun Schema.toType(classProvider: ClassProvider): CtTypeReference<Any> {
@@ -72,6 +73,7 @@ private fun ObjectSchema.generateClass(classProvider: ClassProvider, name: Strin
         ctClass.setParent(packag)
         ctClass.setVisibility<CtModifiable>(ModifierKind.PUBLIC)
         ctClass.setSimpleName<CtClass<Any>>(name ?: this.schemaLocation.split("/").last().capitalize())
+        ctClass.setSuperInterfaces<CtType<Any>>(setOf(createTypeReference(JsonSerializable::class.java)))
         this.propertySchemas.forEach {
             ctClass.addProperty(it.key, it.value, classProvider)
         }
@@ -106,40 +108,10 @@ fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, cl
 
 fun addSerializeStmts(entry: Map.Entry<String, Schema>,
                       classProvider: ClassProvider): Collection<CtStatement> {
-    return when (entry.value) {
-        is StringSchema -> listOf(
-                instanceMethodCall("addProperty", listOf(
-                    stringLiteral(entry.key),
-                    fieldRef(entry.key)
-            ), target=localVarRef("res"))
-        )
-        is BooleanSchema -> listOf(
-                instanceMethodCall("addProperty", listOf(
-                        stringLiteral(entry.key),
-                        fieldRef(entry.key)
-                ), target=localVarRef("res"))
-        )
-        is ArraySchema -> listOf(
-                createBlock(listOf(
-                        createLocalVar("jsonArray", jsonArrayType, objectInstance(jsonArrayType)),
-                        CtForEachImpl().let {
-                            it.setVariable<CtForEach>(createLocalVar("element", (entry.value as ArraySchema).allItemSchema.toType(classProvider)))
-                            it.setExpression<CtForEach>(fieldRef(entry.key))
-                            it.setBody<CtBodyHolder>(createBlock(listOf(
-                                instanceMethodCall("add", listOf(
-                                        staticMethodCall("serialize", listOf(localVarRef("element")), createTypeReference("com.strumenta.json.SerializationUtils"))
-                                ), target= localVarRef("jsonArray"))
-                            )))
-                            it
-                        },
-                        instanceMethodCall("addProperty", listOf(
-                                stringLiteral(entry.key),
-                                localVarRef("jsonArray")),
-                                target=localVarRef("res"))
-                ) })
-        else -> throw UnsupportedOperationException(
-                "Unknown schema: ${entry.value.javaClass.canonicalName}")
-    }
+    return listOf(instanceMethodCall("add", listOf(
+            stringLiteral(entry.key),
+            staticMethodCall("serialize", listOf(fieldRef(entry.key)), createTypeReference("com.strumenta.json.SerializationUtils"))
+    ), target= localVarRef("res")))
 }
 
 fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) {

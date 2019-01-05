@@ -1,36 +1,31 @@
 package com.thefruit.company;
 
-//public class Veggie {
-//    private java.lang.String veggieName;
-//
-//    private boolean veggieLike;
-//
-//    void unserialize() {}
-//
-//    public com.google.gson.JsonObject serialize() {
-//        com.google.gson.JsonObject res = new com.google.gson.JsonObject();
-//        res.addProperty("veggieName", veggieName);
-//        res.addProperty("veggieLike", veggieLike);
-//        return res;
-//    }
-//}
-//public class FruitThing {
-//    private java.util.List<java.lang.String> fruits;
-//
-//    private java.util.List<com.thefruit.company.Veggie> vegetables;
-//
-//    void unserialize() {}
-//
-//    public com.google.gson.JsonObject serialize() {
-//        com.google.gson.JsonObject res = new com.google.gson.JsonObject();
-//        {
-//            com.google.gson.JsonArray jsonArray = new com.google.gson.JsonArray();
-//            res.addProperty("fruits", jsonArray);
-//        }
-//        {
-//            com.google.gson.JsonArray jsonArray = new com.google.gson.JsonArray();
-//            res.addProperty("vegetables", jsonArray);
-//        }
-//        return res;
-//    }
-//}
+
+public class FruitThing implements com.strumenta.json.JsonSerializable {
+    private java.util.List<java.lang.String> fruits;
+
+    public java.util.List<java.lang.String> getFruits() {
+        return fruits;
+    }
+
+    public void setFruits(java.util.List<java.lang.String> fruits) {
+        this.fruits = fruits;
+    }
+
+    private java.util.List<com.thefruit.company.Veggie> vegetables;
+
+    public java.util.List<com.thefruit.company.Veggie> getVegetables() {
+        return vegetables;
+    }
+
+    public void setVegetables(java.util.List<com.thefruit.company.Veggie> vegetables) {
+        this.vegetables = vegetables;
+    }
+
+    public com.google.gson.JsonObject serialize() {
+        com.google.gson.JsonObject res = new com.google.gson.JsonObject();
+        res.add("fruits", com.strumenta.json.SerializationUtils.serialize(fruits));
+        res.add("vegetables", com.strumenta.json.SerializationUtils.serialize(vegetables));
+        return res;
+    }
+}

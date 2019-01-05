@@ -4,15 +4,27 @@ import spoon.reflect.code.*
 import spoon.reflect.declaration.CtClass
 import spoon.reflect.declaration.CtNamedElement
 import spoon.reflect.declaration.CtTypedElement
+import spoon.reflect.factory.FactoryImpl
 import spoon.reflect.reference.CtExecutableReference
 import spoon.reflect.reference.CtPackageReference
 import spoon.reflect.reference.CtReference
 import spoon.reflect.reference.CtTypeReference
+import spoon.support.DefaultCoreFactory
+import spoon.support.StandardEnvironment
 import spoon.support.reflect.code.*
 import spoon.support.reflect.declaration.CtExecutableImpl
 import spoon.support.reflect.reference.CtExecutableReferenceImpl
 import spoon.support.reflect.reference.CtPackageReferenceImpl
 import spoon.support.reflect.reference.CtTypeReferenceImpl
+import java.util.HashSet
+import java.util.Arrays
+import spoon.reflect.declaration.ModifierKind
+import spoon.reflect.declaration.CtParameter
+import spoon.reflect.code.CtBlock
+import spoon.reflect.declaration.CtField
+import java.util.ArrayList
+
+
 
 fun CtPackageReferenceImpl.setTo(packageName: String): CtPackageReferenceImpl {
     this.setSimpleName<CtPackageReference>(packageName)
@@ -115,19 +127,9 @@ fun instanceMethodCall(methodName: String, params: List<CtExpression<Any>>, targ
     }
 }
 
-fun staticMethodCall(methodName: String, params: List<CtExpression<Any>>, target: CtTypeReference<Any>) : CtInvocation<Any> {
-    return CtInvocationImpl<Any>().let {
-        it.setExecutable<CtAbstractInvocation<Any>>(
-                CtExecutableReferenceImpl<Any>().let {
-                    it.setDeclaringType<CtExecutableReference<Any>>(createTypeReference("ciao"))
-                    it.setStatic<CtExecutableReference<Any>>(true)
-                    it.setSimpleName<CtReference>(methodName)
-                    it
-                }
-        )
-        it.setArguments<CtAbstractInvocation<Any>>(params)
-        it
-    }
+fun staticMethodCall(methodName: String, params: List<CtExpression<Any>>, target: CtTypeReference<Any>) : CtExpression<Any> {
+    val f = FactoryImpl(DefaultCoreFactory(), StandardEnvironment())
+    return f.createCodeSnippetExpression("$target.$methodName(${params.joinToString(separator = ", ")})")
 }
 
 fun returnStmt(value: CtExpression<Any>?) : CtReturn<Any> {
@@ -137,4 +139,37 @@ fun returnStmt(value: CtExpression<Any>?) : CtReturn<Any> {
         }
         it
     }
+}
+
+fun addGetter(cl: CtClass<*>, field: CtField<*>) {
+    val f = cl.factory
+    val body = f.createBlock<Any>()
+    body.addStatement<CtStatementList>(f.createCodeSnippetStatement("return " + field.simpleName))
+
+    f.Method().create<Any, Any>(cl, //Hosting class
+            setOf(ModifierKind.PUBLIC), //Modifiers
+            field.type as CtTypeReference<Any>?, //return type
+            "get" + field.simpleName.capitalize(), // Name
+            listOf(), // Parameters
+            setOf(), // Throwable exceptions
+            body //body
+    )
+}
+
+fun addSetter(cl: CtClass<*>, field: CtField<*>) {
+    val f = cl.factory
+    val body = f.createBlock<Void>()
+    body.addStatement<CtStatementList>(f.createCodeSnippetStatement("this." + field.simpleName + " = " + field.simpleName))
+
+    //Executable reference will be filled later
+    val p = f.createParameter(null, field.type, field.simpleName)
+
+    f.Method().create<Void, Void>(cl, //Hosting class
+            setOf(ModifierKind.PUBLIC), //Modifiers
+            f.Type().VOID_PRIMITIVE, //return type
+            "set" + field.simpleName.capitalize(), // Name
+            listOf(p), // Parameters
+            setOf(), // Throwable exceptions
+            body //body
+    )
 }
