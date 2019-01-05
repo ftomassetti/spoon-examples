@@ -76,11 +76,11 @@ private fun ObjectSchema.generateClass(classProvider: ClassProvider, name: Strin
             ctClass.addProperty(it.key, it.value, classProvider)
         }
         addSerializeMethod(ctClass, this, classProvider)
-        // addUnserializeMethod(ctClass, this)
-        CtTypeReferenceImpl<Any>().let {
-            it.setPackage<CtTypeReferenceImpl<Any>>(ctClass.`package`.reference)
-            it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
-        }
+//        // addUnserializeMethod(ctClass, this)
+//        CtTypeReferenceImpl<Any>().let {
+//            it.setPackage<CtTypeReferenceImpl<Any>>(ctClass.`package`.reference)
+//            it.setSimpleName<CtTypeReferenceImpl<Any>>(ctClass.simpleName)
+//        }
         ctClass
     }
 }
@@ -104,7 +104,8 @@ fun addSerializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema, cl
     ctClass.addMethod<Any, CtType<Any>>(method)
 }
 
-fun addSerializeStmts(entry: Map.Entry<String, Schema>, classProvider: ClassProvider): Collection<CtStatement> {
+fun addSerializeStmts(entry: Map.Entry<String, Schema>,
+                      classProvider: ClassProvider): Collection<CtStatement> {
     return when (entry.value) {
         is StringSchema -> listOf(
                 instanceMethodCall("addProperty", listOf(
@@ -135,9 +136,9 @@ fun addSerializeStmts(entry: Map.Entry<String, Schema>, classProvider: ClassProv
                                 stringLiteral(entry.key),
                                 localVarRef("jsonArray")),
                                 target=localVarRef("res"))
-                ))
-        )
-        else -> throw UnsupportedOperationException("Unknown schema: ${entry.value.javaClass.canonicalName}")
+                ) })
+        else -> throw UnsupportedOperationException(
+                "Unknown schema: ${entry.value.javaClass.canonicalName}")
     }
 }
 
@@ -195,7 +196,8 @@ class ClassProvider(val pack: CtPackage) {
     }
 }
 
-fun generateJsonSchema(jsonSchema: InputStream, packageName: String, rootClassName: String) : List<GeneratedJavaFile> {
+fun generateJsonSchema(jsonSchema: InputStream, packageName: String,
+                       rootClassName: String) : List<GeneratedJavaFile> {
     val rawSchema = JSONObject(JSONTokener(jsonSchema))
     val schema = SchemaLoader.load(rawSchema) as ObjectSchema
     val cus = generateClasses(schema, packageName, rootClassName)
@@ -204,7 +206,8 @@ fun generateJsonSchema(jsonSchema: InputStream, packageName: String, rootClassNa
 
     return cus.map { cu ->
         pp.calculate(cu, cu.declaredTypes)
-        val filename = cu.declaredTypes[0].qualifiedName.replace('.', File.separatorChar) + ".java"
+        val filename = cu.declaredTypes[0].qualifiedName.replace(
+                '.', File.separatorChar) + ".java"
 
         GeneratedJavaFile(filename, pp.result)
     }
