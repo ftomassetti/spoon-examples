@@ -10,6 +10,7 @@ import org.json.JSONTokener
 import spoon.reflect.code.CtBodyHolder
 import spoon.reflect.code.CtForEach
 import spoon.reflect.code.CtStatement
+import spoon.reflect.cu.CompilationUnit
 import spoon.reflect.declaration.*
 import spoon.reflect.reference.CtTypeReference
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter
@@ -18,6 +19,7 @@ import spoon.support.reflect.code.CtForEachImpl
 import spoon.support.reflect.cu.CompilationUnitImpl
 import spoon.support.reflect.declaration.*
 import spoon.support.reflect.reference.CtTypeReferenceImpl
+import java.io.File
 import java.io.InputStream
 import java.util.*
 
@@ -159,7 +161,7 @@ fun addUnserializeMethod(ctClass: CtClassImpl<Any>, objectSchema: ObjectSchema) 
     ctClass.addMethod<Any, CtType<Any>>(method)
 }
 
-fun generateClasses(schema: ObjectSchema, packageName: String, rootClassName: String) {
+fun generateClasses(schema: ObjectSchema, packageName: String, rootClassName: String) : List<CompilationUnit> {
     // First we create the classes
     val pack = CtPackageImpl()
     pack.setSimpleName<CtPackage>(packageName)
@@ -168,20 +170,14 @@ fun generateClasses(schema: ObjectSchema, packageName: String, rootClassName: St
     schema.generateClassRecursively(classProvider, rootClassName)
 
     // Then we put them in compilation units and we generate them
-    val pp = DefaultJavaPrettyPrinter(StandardEnvironment())
-
-    classProvider.classesForObjectSchemas.forEach {
+    return classProvider.classesForObjectSchemas.map {
         val cu = CompilationUnitImpl()
         cu.isAutoImport = true
         cu.declaredPackage = pack
         cu.declaredTypes = listOf(it.value)
 
-        pp.calculate(cu, listOf(it.value))
-
-        println("== START ==")
-        println(pp.result)
-        println("== END ==")
-    }
+        cu
+    }.toList()
 }
 
 class ClassProvider(val pack: CtPackage) {
@@ -199,14 +195,32 @@ class ClassProvider(val pack: CtPackage) {
     }
 }
 
-fun generateJsonSchema(jsonSchema: InputStream, packageName: String, rootClassName: String) {
+fun generateJsonSchema(jsonSchema: InputStream, packageName: String, rootClassName: String) : List<GeneratedJavaFile> {
     val rawSchema = JSONObject(JSONTokener(jsonSchema))
     val schema = SchemaLoader.load(rawSchema) as ObjectSchema
-    generateClasses(schema, packageName, rootClassName)
+    val cus = generateClasses(schema, packageName, rootClassName)
+
+    val pp = DefaultJavaPrettyPrinter(StandardEnvironment())
+
+    return cus.map { cu ->
+        pp.calculate(cu, cu.declaredTypes)
+        val filename = cu.declaredTypes[0].qualifiedName.replace('.', File.separatorChar) + ".java"
+
+        GeneratedJavaFile(filename, pp.result)
+    }
 }
+
+data class GeneratedJavaFile(val filename: String, val code: String)
 
 fun main(args: Array<String>) {
     Dummy::class.java.getResourceAsStream("/a_json_schema.json").use {
-        generateJsonSchema(it, "com.thefruit.company", "FruitThing")
+        val generatedClasses = generateJsonSchema(it,
+                "com.thefruit.company", "FruitThing")
+        generatedClasses.forEach {
+            println("*".repeat(it.filename.length))
+            println(it.filename)
+            println("*".repeat(it.filename.length))
+            println(it.code)
+        }
     }
 }
