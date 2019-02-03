@@ -1,10 +1,6 @@
 package com.thefruit.company;
 
 
-import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
-
 public class FruitThing implements com.strumenta.json.JsonSerializable {
     private java.util.List<java.lang.String> fruits;
 
@@ -35,8 +31,8 @@ public class FruitThing implements com.strumenta.json.JsonSerializable {
 
     public static com.thefruit.company.FruitThing unserialize(com.google.gson.JsonObject json) {
         com.thefruit.company.FruitThing res = new com.thefruit.company.FruitThing();
-        res.setFruits((List<String>)com.strumenta.json.SerializationUtils.unserialize(json.get("fruits"), TypeToken.getParameterized(List.class, String.class)));
-        res.setVegetables((List<Veggie>)com.strumenta.json.SerializationUtils.unserialize(json.get("vegetables"), TypeToken.getParameterized(List.class, Veggie.class)));
+        res.setFruits((java.util.List) com.strumenta.json.SerializationUtils.unserialize(json.get("fruits"), com.google.gson.reflect.TypeToken.getParameterized(java.util.List.class, java.lang.String.class)));
+        res.setVegetables((java.util.List) com.strumenta.json.SerializationUtils.unserialize(json.get("vegetables"), com.google.gson.reflect.TypeToken.getParameterized(java.util.List.class, com.thefruit.company.Veggie.class)));
         return res;
     }
 }

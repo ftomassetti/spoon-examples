@@ -142,6 +142,21 @@ fun returnStmt(value: CtExpression<Any>?) : CtReturn<Any> {
     }
 }
 
+fun classField(cl: Class<*>) : CtCodeSnippetExpression<Any> {
+    val f = FactoryImpl(DefaultCoreFactory(), StandardEnvironment())
+    return f.createCodeSnippetExpression("${cl.canonicalName}.class")
+}
+
+fun classField(cl: CtTypeReference<*>) : CtCodeSnippetExpression<Any> {
+    val f = FactoryImpl(DefaultCoreFactory(), StandardEnvironment())
+    return f.createCodeSnippetExpression("${cl.qualifiedName}.class")
+}
+
+fun cast(expression: CtExpression<Any>, cl: CtTypeReference<Any>) : CtExpression<Any> {
+    val f = FactoryImpl(DefaultCoreFactory(), StandardEnvironment())
+    return f.createCodeSnippetExpression("(${cl.qualifiedName}) ${expression.toString()}")
+}
+
 fun addGetter(cl: CtClass<*>, field: CtField<*>) {
     val f = cl.factory
     val body = f.createBlock<Any>()

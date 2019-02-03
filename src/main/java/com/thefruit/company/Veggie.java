@@ -1,8 +1,6 @@
 package com.thefruit.company;
 
 
-import com.google.gson.reflect.TypeToken;
-
 public class Veggie implements com.strumenta.json.JsonSerializable {
     private java.lang.String veggieName;
 
@@ -33,8 +31,8 @@ public class Veggie implements com.strumenta.json.JsonSerializable {
 
     public static com.thefruit.company.Veggie unserialize(com.google.gson.JsonObject json) {
         com.thefruit.company.Veggie res = new com.thefruit.company.Veggie();
-        res.setVeggieName((String)com.strumenta.json.SerializationUtils.unserialize(json.get("veggieName"), TypeToken.get(String.class)));
-        res.setVeggieLike((Boolean)com.strumenta.json.SerializationUtils.unserialize(json.get("veggieLike"), TypeToken.get(Boolean.class)));
+        res.setVeggieName((java.lang.String) com.strumenta.json.SerializationUtils.unserialize(json.get("veggieName"), com.google.gson.reflect.TypeToken.get(java.lang.String.class)));
+        res.setVeggieLike((boolean) com.strumenta.json.SerializationUtils.unserialize(json.get("veggieLike"), com.google.gson.reflect.TypeToken.get(boolean.class)));
         return res;
     }
 }

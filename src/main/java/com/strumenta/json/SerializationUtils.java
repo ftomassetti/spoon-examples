@@ -47,7 +47,8 @@ public class SerializationUtils {
         if (expectedType.getRawType().getCanonicalName().equals(String.class.getCanonicalName())) {
             return json.getAsString();
         }
-        if (expectedType.getRawType().getCanonicalName().equals(Boolean.class.getCanonicalName())) {
+        if (expectedType.getRawType().getCanonicalName().equals(Boolean.class.getCanonicalName())
+                || expectedType.getRawType().getCanonicalName().equals(boolean.class.getCanonicalName())) {
             return json.getAsBoolean();
         }
         if (JsonSerializable.class.isAssignableFrom(expectedType.getRawType())) {

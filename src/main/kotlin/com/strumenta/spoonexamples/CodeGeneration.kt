@@ -3,23 +3,22 @@ package com.strumenta.spoonexamples
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.strumenta.json.JsonSerializable
+import com.strumenta.json.SerializationUtils
 import org.everit.json.schema.*
 import org.everit.json.schema.loader.SchemaLoader
 import org.json.JSONObject
 import org.json.JSONTokener
-import spoon.reflect.code.CtBodyHolder
-import spoon.reflect.code.CtForEach
+import spoon.reflect.code.CtExpression
 import spoon.reflect.code.CtStatement
 import spoon.reflect.cu.CompilationUnit
 import spoon.reflect.declaration.*
 import spoon.reflect.reference.CtTypeReference
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter
 import spoon.support.StandardEnvironment
-import spoon.support.reflect.code.CtForEachImpl
 import spoon.support.reflect.cu.CompilationUnitImpl
 import spoon.support.reflect.declaration.*
-import spoon.support.reflect.reference.CtTypeReferenceImpl
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -106,16 +105,39 @@ fun addSerializeStmts(entry: Map.Entry<String, Schema>,
                       classProvider: ClassProvider): Collection<CtStatement> {
     return listOf(instanceMethodCall("add", listOf(
             stringLiteral(entry.key),
-            staticMethodCall("serialize", listOf(fieldRef(entry.key)), createTypeReference("com.strumenta.json.SerializationUtils"))
+            staticMethodCall("serialize",
+                    listOf(fieldRef(entry.key)),
+                    createTypeReference(SerializationUtils::class.java))
     ), target= localVarRef("res")))
 }
 
 fun addUnserializeStmts(entry: Map.Entry<String, Schema>,
                       classProvider: ClassProvider): Collection<CtStatement> {
+    // call to get the field, e.g. `json.get("veggieName")`
+    val getField = instanceMethodCall("get",
+            listOf(stringLiteral(entry.key)),
+            target = localVarRef("json"))
+    // call to create the TypeToken, e.g., `TypeToken.get(String.class)`
+    // or `TypeToken.getParameterized(List.class, String.class)`
+
+    val ctFieldType = entry.value.toType(classProvider)
+    val createTypeToken = if (ctFieldType is CtTypeReference<Any> && ctFieldType.actualTypeArguments.isNotEmpty()) {
+        staticMethodCall("getParameterized",
+                (listOf(classField(ctFieldType)) + ctFieldType.actualTypeArguments.map { classField(it) }).toList() as List<CtExpression<Any>>,
+                createTypeReference(TypeToken::class.java))
+    } else {
+        staticMethodCall("get",
+                listOf(classField(ctFieldType)),
+                createTypeReference(TypeToken::class.java))
+    }
+
+    val callToUnserialize = staticMethodCall("unserialize",
+            listOf(getField, createTypeToken),
+            createTypeReference("com.strumenta.json.SerializationUtils"))
+    val castedCallToUnserialize = cast(callToUnserialize, entry.value.toType(classProvider))
+
     return listOf(instanceMethodCall("set" + entry.key.capitalize(), listOf(
-            staticMethodCall("unserialize",
-                    listOf(instanceMethodCall("get", listOf(stringLiteral(entry.key)), target = localVarRef("json"))),
-                    createTypeReference("com.strumenta.json.SerializationUtils"))
+            castedCallToUnserialize
     ), target= localVarRef("res")))
 }
 
