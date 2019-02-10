@@ -3,9 +3,11 @@ package com.strumenta.spoonexamples
 import spoon.Launcher
 import spoon.reflect.code.*
 import spoon.reflect.declaration.*
+import spoon.reflect.reference.CtLocalVariableReference
 import spoon.reflect.reference.CtParameterReference
 import spoon.reflect.reference.CtTypeReference
 import spoon.reflect.visitor.CtAbstractVisitor
+import spoon.reflect.visitor.CtIterator
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter
 import spoon.support.StandardEnvironment
 import spoon.support.reflect.code.CtAssignmentImpl
@@ -15,6 +17,20 @@ import spoon.support.reflect.cu.CompilationUnitImpl
 import spoon.support.reflect.declaration.CtFieldImpl
 import spoon.support.reflect.declaration.CtParameterImpl
 import spoon.support.reflect.reference.CtTypeReferenceImpl
+
+fun qualifiedFieldAccess(name: String, className: String) : CtFieldAccess<Any> {
+    return fieldRef(name).let {
+        val target = CtThisAccessImpl<Any>().let {
+            it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(CtTypeAccessImpl<Any>().let {
+                it.setAccessedType<CtTypeAccess<Any>>(createTypeReference(className))
+                it
+            })
+            it
+        }
+        it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(target)
+        it
+    }
+}
 
 class ParamToFieldRefactoring(val paramName: String, val paramType: CtTypeReference<Any>) {
 
@@ -34,17 +50,7 @@ class ParamToFieldRefactoring(val paramName: String, val paramType: CtTypeRefere
                 it
             })
             it.body.statements.add(CtAssignmentImpl<Any, Any>().let {
-                it.setAssigned<CtAssignment<Any, Any>>(fieldRef(paramName).let {
-                    val target = CtThisAccessImpl<Any>().let {
-                        it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(CtTypeAccessImpl<Any>().let {
-                            it.setAccessedType<CtTypeAccess<Any>>(createTypeReference(clazz.qualifiedName))
-                            it
-                        })
-                        it
-                    }
-                    it.setTarget<CtTargetedExpression<Any, CtExpression<*>>>(target)
-                    it
-                })
+                it.setAssigned<CtAssignment<Any, Any>>(qualifiedFieldAccess(paramName, clazz.qualifiedName))
                 it.setAssignment<CtRHSReceiver<Any>>(localVarRef(paramName))
                 it
             })
@@ -54,11 +60,11 @@ class ParamToFieldRefactoring(val paramName: String, val paramType: CtTypeRefere
         clazz.methods.filter { findParamToChange(it) != null }.forEach {
             val param = findParamToChange(it)!!
 
-            it.accept(object : CtAbstractVisitor() {
-                override fun <T : Any?> visitCtParameterReference(reference: CtParameterReference<T>?) {
-                    println("REFERENCE $reference")
+            CtIterator(it).forEach {
+                if (it is CtParameterReference<*> && it.simpleName == paramName) {
+                    it.replace(qualifiedFieldAccess(paramName, clazz.qualifiedName))
                 }
-            })
+            }
 
             param.delete()
         }
@@ -95,6 +101,7 @@ fun main(args: Array<String>) {
     val parsedClass = Launcher.parseClass(originalCode)
     ParamToFieldRefactoring("param", createTypeReference("com.strumenta.MyParam")).refactor(parsedClass)
 
+    // TODO see https://github.com/INRIA/spoon/issues/2876
     println(parsedClass.toCode())
 
 }
