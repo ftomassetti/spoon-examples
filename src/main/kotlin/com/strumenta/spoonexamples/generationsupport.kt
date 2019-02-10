@@ -1,11 +1,9 @@
 package com.strumenta.spoonexamples
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import spoon.reflect.code.*
-import spoon.reflect.declaration.CtClass
-import spoon.reflect.declaration.CtNamedElement
-import spoon.reflect.declaration.CtTypedElement
+import spoon.reflect.declaration.*
 import spoon.reflect.factory.FactoryImpl
-import spoon.reflect.reference.CtExecutableReference
 import spoon.reflect.reference.CtPackageReference
 import spoon.reflect.reference.CtReference
 import spoon.reflect.reference.CtTypeReference
@@ -16,14 +14,6 @@ import spoon.support.reflect.declaration.CtExecutableImpl
 import spoon.support.reflect.reference.CtExecutableReferenceImpl
 import spoon.support.reflect.reference.CtPackageReferenceImpl
 import spoon.support.reflect.reference.CtTypeReferenceImpl
-import java.util.HashSet
-import java.util.Arrays
-import spoon.reflect.declaration.ModifierKind
-import spoon.reflect.declaration.CtParameter
-import spoon.reflect.code.CtBlock
-import spoon.reflect.declaration.CtField
-import java.util.ArrayList
-
 
 
 fun CtPackageReferenceImpl.setTo(packageName: String): CtPackageReferenceImpl {
