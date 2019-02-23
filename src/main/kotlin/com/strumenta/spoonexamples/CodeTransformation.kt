@@ -3,9 +3,7 @@ package com.strumenta.spoonexamples
 import spoon.Launcher
 import spoon.reflect.code.*
 import spoon.reflect.declaration.*
-import spoon.reflect.reference.CtLocalVariableReference
-import spoon.reflect.reference.CtParameterReference
-import spoon.reflect.reference.CtTypeReference
+import spoon.reflect.reference.*
 import spoon.reflect.visitor.CtAbstractVisitor
 import spoon.reflect.visitor.CtIterator
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter
@@ -16,6 +14,7 @@ import spoon.support.reflect.code.CtTypeAccessImpl
 import spoon.support.reflect.cu.CompilationUnitImpl
 import spoon.support.reflect.declaration.CtFieldImpl
 import spoon.support.reflect.declaration.CtParameterImpl
+import spoon.support.reflect.reference.CtFieldReferenceImpl
 import spoon.support.reflect.reference.CtTypeReferenceImpl
 
 fun qualifiedFieldAccess(name: String, className: String) : CtFieldAccess<Any> {
@@ -56,13 +55,15 @@ class ParamToFieldRefactoring(val paramName: String, val paramType: CtTypeRefere
             })
         }
 
-        // TODO add constructor parameter and assignment
         clazz.methods.filter { findParamToChange(it) != null }.forEach {
             val param = findParamToChange(it)!!
 
             CtIterator(it).forEach {
                 if (it is CtParameterReference<*> && it.simpleName == paramName) {
-                    it.replace(qualifiedFieldAccess(paramName, clazz.qualifiedName))
+                    val cfr = CtFieldReferenceImpl<Any>()
+                    cfr.setSimpleName<CtReference>(paramName)
+                    cfr.setDeclaringType<CtFieldReference<Any>>(createTypeReference(clazz.qualifiedName))
+                    it.replace(cfr)
                 }
             }
 
@@ -100,8 +101,7 @@ fun main(args: Array<String>) {
         }"""
     val parsedClass = Launcher.parseClass(originalCode)
     ParamToFieldRefactoring("param", createTypeReference("com.strumenta.MyParam")).refactor(parsedClass)
-
-    // TODO see https://github.com/INRIA/spoon/issues/2876
+    
     println(parsedClass.toCode())
 
 }
